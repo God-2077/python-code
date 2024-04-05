@@ -96,6 +96,7 @@ def download_playlist(playlist_id, download_path):
         if failed_downloads:
             print(f"共有 {len(failed_downloads)} 首歌曲下载失败，id为：{','.join(failed_downloads)}")
         sys.exit(0)
+        input()
 
     signal.signal(signal.SIGINT, signal_handler)
 
@@ -145,7 +146,7 @@ def download_playlist(playlist_id, download_path):
 
                 # 使用librosa获取音频持续时间
         try:
-            audio_duration = librosa.get_duration(filename=song_path)
+            audio_duration = librosa.get_duration(path=song_path)
             if audio_duration < 60:
                 print(f"歌曲时长小于一分钟，删除歌曲和歌词：{song_path}")
                 delete_file(song_path)
