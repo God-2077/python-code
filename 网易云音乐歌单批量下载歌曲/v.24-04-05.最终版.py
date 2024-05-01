@@ -54,7 +54,6 @@ def download_playlist(playlist_id, download_path):
     # JSON链接
     api_urls = [
         "https://api.injahow.cn/meting/?type=playlist&id=",
-        "https://api.injahow.cn/meting/?type=playlist&id=",
         "https://meting.qjqq.cn/?type=playlist&id="
     ]
 

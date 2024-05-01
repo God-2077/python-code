@@ -9,6 +9,8 @@
 import time
 import keyboard
 from configparser import ConfigParser
+import signal
+import sys
 
 # 读取config.ini配置文件
 conf = ConfigParser()  # 需要实例化一个ConfigParser对象
@@ -40,5 +42,10 @@ def on_key(event):
     # 关闭文件
     f.close()
 
+def signal_handler(sig, frame):
+    print("检测到Ctrl+C, exiting...")
+    sys.exit(0)
+    input()
+signal.signal(signal.SIGINT, signal_handler)
 keyboard.on_press(on_key)
 keyboard.wait()
