@@ -11,7 +11,7 @@
 安装第三方库
 
 ```bash
-pip install quote && pip install requests && pip install librosa
+pip install -r requirements.txt
 ```
 
 运行

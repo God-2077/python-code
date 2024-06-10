@@ -2,7 +2,7 @@
 
 键盘监听
 
-最新版：[Keyboard monitoring][1]
+最新版：[v.24.06.10.py][1]
 
 ## 说明
 
@@ -11,7 +11,7 @@
 安装第三方库
 
 ```bash
-pip install keyboard && pip install ConfigParser
+pip install -r requirements.txt
 ```
 
 运行
@@ -25,8 +25,14 @@ config.ini
 
 ```
 [config]
-file=./keyboard.txt
+file=./ada.txt
+wait=aw4
+waittime=10
+exit=aaa
 ```
-file 为键盘监听按键记录保存的路径
 
-[1]: https://github.com/God-2077/python-code/tree/main/键盘监听/Keyboard%20monitoring.py
+file 为键盘监听按键记录保存的路径
+输入aw4等待10秒
+输入aaa退出
+
+[1]: https://github.com/God-2077/python-code/tree/main/键盘监听/v.24.06.10.py
