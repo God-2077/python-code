@@ -94,7 +94,7 @@ else:
     print("配置文件 Not Found !!!")
 
 if fnfe == True :
-    print(f"错误: {e}", file=f)
+    print(f"错误: FileNotFoundError", file=f)
 
 if nse == True:
     print(f"错误: 配置文件中缺少 config 部分", file=f)
