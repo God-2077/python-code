@@ -1,3 +1,13 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# @Date    : 2024/06/16
+# @Author  : Kissablecho
+# @FileName: Keyboard monitoring.py
+# @Software: Visual Studio Code
+# @Blog    ：https://blog.csdn.net/y223421
+# @Blog    : https://buasis.eu.org/
+# @Github  : https://github.com/God-2077
+
 from datetime import datetime
 import keyboard
 from configparser import ConfigParser, NoSectionError, NoOptionError
