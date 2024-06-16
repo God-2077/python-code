@@ -16,7 +16,7 @@ pip install -r requirements.txt
 
 运行
 
-```
+```bash
 python ***.py
 ```
 
