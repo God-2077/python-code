@@ -53,7 +53,10 @@ jobs:
 
     - name: Get current date in UTC+8
       id: date
-      run: echo "CURRENT_DATE=$(TZ=Asia/Shanghai date +'%y.%m.%d')" >> $GITHUB_ENV
+      shell: pwsh
+      run: |
+        $currentDate = (Get-Date).ToUniversalTime().AddHours(8).ToString("yy.MM.dd")
+        echo "CURRENT_DATE=$currentDate" >> $GITHUB_ENV
 
     - name: Create Release
       id: create_release
@@ -67,15 +70,11 @@ jobs:
         prerelease: false
 
     - name: Upload Release Assets
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: |
-          Get-ChildItem -Recurse -Filter *.exe | ForEach-Object {
-            Write-Output $_.FullName
-          }
-        asset_name: |
-          Get-ChildItem -Recurse -Filter *.exe | ForEach-Object {
-            Write-Output $_.Name
-          }
-        asset_content_type: application/octet-stream
+      shell: pwsh
+      run: |
+        $releaseUrl = "${{ steps.create_release.outputs.upload_url }}"
+        Get-ChildItem -Recurse -Filter *.exe | ForEach-Object {
+          gh release upload $releaseUrl $_.FullName
+        }
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
