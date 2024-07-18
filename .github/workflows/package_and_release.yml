@@ -1,7 +1,7 @@
-name: Package and Release
+name: Package and Release EXE Files
 
 on:
-  workflow_dispatch: # 手动触发
+  workflow_dispatch:
 
 jobs:
   build:
@@ -18,47 +18,56 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Install dependencies
-      run: |
-        Set-Location -Path $Env:GITHUB_WORKSPACE
-        Get-ChildItem -Recurse -Filter requirements.txt | ForEach-Object {
-          pip install -r $_.FullName
-        }
+    - name: Install PyInstaller
+      run: pip install pyinstaller
 
-    - name: Find and Package Latest Scripts
+    - name: Install Requirements
       run: |
-        Set-Location -Path $Env:GITHUB_WORKSPACE
-        Get-ChildItem -Directory | ForEach-Object {
-          $latest_script = Get-ChildItem -Path $_.FullName -Filter *.py | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-          if ($latest_script) {
-            $script_name = [System.IO.Path]::GetFileNameWithoutExtension($latest_script.Name)
-            $exe_name = "$script_name.exe"
-            pyinstaller --onefile $latest_script.FullName
-            Move-Item -Path "dist/$script_name.exe" -Destination "dist/$exe_name"
-          }
-        }
+        for /d %%i in (*) do (
+          if exist "%%i/requirements.txt" (
+            pip install -r %%i/requirements.txt
+          )
+        )
 
-    - name: Get current date in UTC+8
-      id: date
-      run: echo "CURRENT_DATE=$(TZ=Asia/Shanghai date +'%y.%m.%d')" >> $GITHUB_ENV
+    - name: Package Python scripts to EXE
+      run: |
+        for /d %%i in (*) do (
+          set latest_file=
+          for %%j in (%%i/*.py) do set latest_file=%%j
+          if defined latest_file (
+            pyinstaller --onefile --distpath %%i --workpath %%i/build --specpath %%i/spec %%latest_file%%
+          )
+        )
 
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
-      with:
-        tag_name: "v.${{ env.CURRENT_DATE }}"
-        release_name: "v.${{ env.CURRENT_DATE }}"
-        draft: false
-        prerelease: false
-        generate_release_notes: true
-        token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Upload Release Assets
-      run: |
-        Set-Location -Path $Env:GITHUB_WORKSPACE/dist
-        $release_url = "${{ steps.create_release.outputs.html_url }}"
-        Get-ChildItem -Filter *.exe | ForEach-Object {
-          gh release upload $release_url $_.FullName
-        }
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ github.event.inputs.tag_name }}
+        release_name: Release ${{ github.event.inputs.release_name }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Assets
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: |
+          for /d %%i in (*) do (
+            set latest_file=
+            for %%j in (%%i/*.exe) do set latest_file=%%j
+            if defined latest_file (
+              echo %%latest_file%%
+            )
+          )
+        asset_name: |
+          for /d %%i in (*) do (
+            set latest_file=
+            for %%j in (%%i/*.exe) do set latest_file=%%j
+            if defined latest_file (
+              echo %%~nlatest_file%%
+            )
+          )
+        asset_content_type: application/octet-stream
