@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - name: Checkout repository
@@ -20,23 +20,23 @@ jobs:
 
     - name: Install dependencies
       run: |
-        for dir in */; do
-          if [ -f "$dir/requirements.txt" ]; then
-            pip install -r "$dir/requirements.txt"
-          fi
-        done
+        Set-Location -Path $Env:GITHUB_WORKSPACE
+        Get-ChildItem -Recurse -Filter requirements.txt | ForEach-Object {
+          pip install -r $_.FullName
+        }
 
     - name: Find and Package Latest Scripts
       run: |
-        for dir in */; do
-          latest_script=$(ls -t "$dir"/*.py | head -n 1)
-          if [ -n "$latest_script" ]; then
-            script_name=$(basename "$latest_script" .py)
-            exe_name="${script_name}.exe"
-            pyinstaller --onefile "$latest_script"
-            mv "dist/$script_name" "dist/$exe_name"
-          fi
-        done
+        Set-Location -Path $Env:GITHUB_WORKSPACE
+        Get-ChildItem -Directory | ForEach-Object {
+          $latest_script = Get-ChildItem -Path $_.FullName -Filter *.py | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+          if ($latest_script) {
+            $script_name = [System.IO.Path]::GetFileNameWithoutExtension($latest_script.Name)
+            $exe_name = "$script_name.exe"
+            pyinstaller --onefile $latest_script.FullName
+            Move-Item -Path "dist/$script_name.exe" -Destination "dist/$exe_name"
+          }
+        }
 
     - name: Get current date in UTC+8
       id: date
@@ -55,10 +55,10 @@ jobs:
 
     - name: Upload Release Assets
       run: |
-        for file in dist/*.exe; do
-          if [ -f "$file" ]; then
-            gh release upload ${{ steps.create_release.outputs.html_url }} "$file"
-          fi
-        done
+        Set-Location -Path $Env:GITHUB_WORKSPACE/dist
+        $release_url = "${{ steps.create_release.outputs.html_url }}"
+        Get-ChildItem -Filter *.exe | ForEach-Object {
+          gh release upload $release_url $_.FullName
+        }
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
