@@ -1,3 +1,4 @@
 quote
 requests
-librosa
+tabulate
+mutagen
