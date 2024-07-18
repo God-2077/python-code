@@ -1,0 +1,64 @@
+name: Package and Release
+
+on:
+  workflow_dispatch: # 手动触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        ref: main
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        for dir in */; do
+          if [ -f "$dir/requirements.txt" ]; then
+            pip install -r "$dir/requirements.txt"
+          fi
+        done
+
+    - name: Find and Package Latest Scripts
+      run: |
+        for dir in */; do
+          latest_script=$(ls -t "$dir"/*.py | head -n 1)
+          if [ -n "$latest_script" ]; then
+            script_name=$(basename "$latest_script" .py)
+            exe_name="${script_name}.exe"
+            pyinstaller --onefile "$latest_script"
+            mv "dist/$script_name" "dist/$exe_name"
+          fi
+        done
+
+    - name: Get current date in UTC+8
+      id: date
+      run: echo "CURRENT_DATE=$(TZ=Asia/Shanghai date +'%y.%m.%d')" >> $GITHUB_ENV
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      with:
+        tag_name: "v.${{ env.CURRENT_DATE }}"
+        release_name: "v.${{ env.CURRENT_DATE }}"
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload Release Assets
+      run: |
+        for file in dist/*.exe; do
+          if [ -f "$file" ]; then
+            gh release upload ${{ steps.create_release.outputs.html_url }} "$file"
+          fi
+        done
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
