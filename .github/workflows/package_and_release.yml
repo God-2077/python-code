@@ -42,7 +42,7 @@ jobs:
 
     - name: Create Release
       id: create_release
-      uses: actions/create-release@v1
+      uses: actions/create-release@latest
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -55,6 +55,6 @@ jobs:
       shell: pwsh
       run: |
         $releaseUrl = "${{ steps.create_release.outputs.upload_url }}"
-        Get-ChildItem -Recurse -Filter *.exe | ForEach-Object { gh release upload $releaseUrl $_.FullName }
+        Get-ChildItem -Recurse -Filter *.exe | ForEach-Object { gh release upload --clobber ${{ github.event.inputs.tag_name }} $_.FullName }
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
