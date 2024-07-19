@@ -38,7 +38,8 @@ jobs:
     - name: Package Python scripts to EXE
       shell: pwsh
       run: |
-        Get-ChildItem -Directory | ForEach-Object { $latestScript = Get-ChildItem -Path "$($_.FullName)" -Filter *.py | Sort-Object LastWriteTime -Descending | Select-Object -First 1; if ($latestScript) { $scriptName = [System.IO.Path]::GetFileNameWithoutExtension($latestScript.Name); $exeName = "$scriptName.exe"; pyinstaller --onefile --distpath "$($_.FullName)\dist" --workpath "$($_.FullName)\build" --specpath "$($_.FullName)\spec" "$($latestScript.FullName)" } }
+        Get-ChildItem -Directory | ForEach-Object { $latestScript = Get-ChildItem -Path "$($_.FullName)" -Filter *.py | Sort-Object LastWriteTime -Descending | Select-Object -First 1; if ($latestScript) { $scriptName = [System.IO.Path]::GetFileNameWithoutExtension($latestScript.Name); $exeName = "$scriptName.exe"; pyinstaller --onefile --distpath "$($_.FullName)\dist" --workpath "$($_.FullName)\build" --specpath "$($_.FullName)\spec" "$($latestScript.FullName)"; $distPath = "$($_.FullName)\dist"; $exePath = Join-Path -Path $distPath -ChildPath $exeName; $sortedExeName = "zz_$exeName"; Rename-Item -Path $exePath -NewName $sortedExeName } }
+
 
     - name: Create Release
       id: create_release
