@@ -40,21 +40,14 @@ jobs:
       run: |
         Get-ChildItem -Directory | ForEach-Object { $latestScript = Get-ChildItem -Path "$($_.FullName)" -Filter *.py | Sort-Object LastWriteTime -Descending | Select-Object -First 1; if ($latestScript) { $scriptName = [System.IO.Path]::GetFileNameWithoutExtension($latestScript.Name); $exeName = "$scriptName.exe"; pyinstaller --onefile --distpath "$($_.FullName)\dist" --workpath "$($_.FullName)\build" --specpath "$($_.FullName)\spec" "$($latestScript.FullName)" } }
 
-    - name: Get current date and time in UTC+8
-      id: datetime
-      shell: pwsh
-      run: |
-        $currentDateTime = (Get-Date).ToUniversalTime().AddHours(8).ToString("yyyyMMdd-HHmmss")
-        echo "CURRENT_DATETIME=$currentDateTime" >> $GITHUB_ENV
-
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: "v${{ env.CURRENT_DATETIME }}"
-        release_name: "Release ${{ env.CURRENT_DATETIME }}"
+        tag_name: ${{ github.event.inputs.tag_name }}
+        release_name: ${{ github.event.inputs.release_name }}
         draft: false
         prerelease: false
 
