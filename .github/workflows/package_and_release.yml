@@ -34,10 +34,16 @@ jobs:
       shell: pwsh
       run: |
         Get-ChildItem -Directory | ForEach-Object {
-          if (Test-Path "$($_.FullName)\requirements.txt") {
-            pip install -r "$($_.FullName)\requirements.txt"
-          }
-        }
+            $requirementsPath = "$($_.FullName)\requirements.txt"
+            if (Test-Path $requirementsPath) {
+                try {
+                    pip install -r $requirementsPath
+                } catch {
+                    Write-Error "Failed to install packages from $requirementsPath"
+                }
+            }
+        
+
 
     - name: Package Python scripts to EXE
       shell: pwsh
