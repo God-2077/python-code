@@ -46,7 +46,8 @@ jobs:
       shell: pwsh
       run: |
         $env:GITHUB_TOKEN | Out-File -FilePath gh_token.txt -NoNewline;
-        gh auth login --with-token < gh_token.txt;
+        $token = Get-Content gh_token.txt;
+        gh auth login --with-token $token;
         Remove-Item gh_token.txt
 
     - name: Create Release and Upload Assets
