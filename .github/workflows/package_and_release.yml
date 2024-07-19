@@ -46,4 +46,7 @@ jobs:
       shell: pwsh
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: gh auth login --with-token <<< $env:GITHUB_TOKEN; gh release create ${{ github.event.inputs.tag_name }} --title "${{ github.event.inputs.release_name }}" --notes "Release ${{ github.event.inputs.release_name }}"; Get-ChildItem -Recurse -Filter *.exe | ForEach-Object { gh release upload ${{ github.event.inputs.tag_name }} $_.FullName --clobber }
+      run: |
+        echo $env:GITHUB_TOKEN | gh auth login --with-token;
+        gh release create ${{ github.event.inputs.tag_name }} --title "${{ github.event.inputs.release_name }}" --notes "Release ${{ github.event.inputs.release_name }}";
+        Get-ChildItem -Recurse -Filter *.exe | ForEach-Object { gh release upload ${{ github.event.inputs.tag_name }} $_.FullName --clobber }
