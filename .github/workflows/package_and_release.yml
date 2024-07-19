@@ -34,20 +34,18 @@ jobs:
       shell: pwsh
       run: |
         Get-ChildItem -Directory | ForEach-Object { $requirementsPath = "$($_.FullName)\requirements.txt"; if (Test-Path $requirementsPath) { try { pip install -r $requirementsPath } catch { Write-Error "Failed to install packages from $requirementsPath" } } }
- 
-
 
     - name: Package Python scripts to EXE
       shell: pwsh
       run: |
         Get-ChildItem -Directory | ForEach-Object { $latestScript = Get-ChildItem -Path "$($_.FullName)" -Filter *.py | Sort-Object LastWriteTime -Descending | Select-Object -First 1; if ($latestScript) { $scriptName = [System.IO.Path]::GetFileNameWithoutExtension($latestScript.Name); $exeName = "$scriptName.exe"; pyinstaller --onefile --distpath "$($_.FullName)\dist" --workpath "$($_.FullName)\build" --specpath "$($_.FullName)\spec" "$($latestScript.FullName)" } }
 
-    - name: Get current date in UTC+8
-      id: date
+    - name: Get current date and time in UTC+8
+      id: datetime
       shell: pwsh
       run: |
-        $currentDate = (Get-Date).ToUniversalTime().AddHours(8).ToString("yy.MM.dd")
-        echo "CURRENT_DATE=$currentDate" >> $GITHUB_ENV
+        $currentDateTime = (Get-Date).ToUniversalTime().AddHours(8).ToString("yyyyMMdd-HHmmss")
+        echo "CURRENT_DATETIME=$currentDateTime" >> $GITHUB_ENV
 
     - name: Create Release
       id: create_release
@@ -55,8 +53,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: "v${{ env.CURRENT_DATE }}"
-        release_name: "Release ${{ env.CURRENT_DATE }}"
+        tag_name: "v${{ env.CURRENT_DATETIME }}"
+        release_name: "Release ${{ env.CURRENT_DATETIME }}"
         draft: false
         prerelease: false
 
@@ -65,6 +63,5 @@ jobs:
       run: |
         $releaseUrl = "${{ steps.create_release.outputs.upload_url }}"
         Get-ChildItem -Recurse -Filter *.exe | ForEach-Object { gh release upload $releaseUrl $_.FullName }
-
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
