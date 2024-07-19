@@ -40,9 +40,7 @@ jobs:
 
     - name: Install GitHub CLI
       run: |
-        Invoke-WebRequest -Uri https://github.com/cli/cli/releases/download/v2.20.2/gh_2.20.2_windows_amd64.msi -OutFile gh-cli.msi; \
-        Start-Process msiexec.exe -Wait -ArgumentList '/i gh-cli.msi /quiet'; \
-        Remove-Item gh-cli.msi -Force
+        Invoke-WebRequest -Uri https://github.com/cli/cli/releases/download/v2.20.2/gh_2.20.2_windows_amd64.msi -OutFile gh-cli.msi; Start-Process msiexec.exe -Wait -ArgumentList '/i gh-cli.msi /quiet'; Remove-Item gh-cli.msi -Force
 
     - name: Create Release and Upload Assets
       shell: pwsh
