@@ -16,6 +16,12 @@
 
 最新版：[v.24.07.16][5]
 
+## psql_terminal
+
+简单的 PostgreSQL 终端，可以执行 SQL 语句，如 `SELECT * FROM Websites;`
+
+[psql_terminal](./psql_terminal/readme.md)
+
 
 
 
