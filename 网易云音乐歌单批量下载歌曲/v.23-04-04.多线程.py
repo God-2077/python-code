@@ -7,6 +7,23 @@ import requests
 from urllib.parse import quote
 from concurrent.futures import ThreadPoolExecutor
 
+
+log_msg = {}
+log_index = 0
+
+
+def show_log(f:bool=False):
+    global log_index
+    if f or log_index % 20 == 0:
+        p_msg = ""
+        os.system('cls')
+        for k in log_msg.keys():
+            msg = log_msg[k]
+            p_msg += msg + "\n"
+        print(p_msg, end="", flush=True)
+    log_index+=1
+
+
 def download_song(url, song_path):
     try:
         response = requests.get(url, stream=True)
@@ -19,9 +36,11 @@ def download_song(url, song_path):
                 downloaded_size += len(data)
                 song_file.write(data)
                 progress = downloaded_size / total_size * 100 if total_size > 0 else 0
-                print(f"正在下载 {song_path}，进度：{progress:.2f}%\r", end="")
-        
-        print(f"下载完成 {song_path}")
+                log_msg[key] = f"正在下载 {song_path}，进度：{progress:.2f}%\r"
+                show_log()
+
+        log_msg[key] = f"下载完成 {song_path}"
+        show_log(True)
     except requests.exceptions.RequestException as e:
         print(f"下载 {song_path} 失败：{e}")
 
