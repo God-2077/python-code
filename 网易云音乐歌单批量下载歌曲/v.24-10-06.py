@@ -138,7 +138,7 @@ def download_playlist(playlist_id, download_path):
     if chose not in ["y", "", "yes"]:
         print("退出程序...")
         sys.exit(0)
-    chose = str(input("是否下载小于 60 秒的歌曲（可能为试听音乐）?(yes): "))
+    chose = str(input("是否下载小于 60 秒的歌曲（可能为试听音乐）?(not): "))
     if chose not in ["y", "", "yes"]:
         downtrymusic = 1
     else:
