@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# @Date    : 2025/05/02
+# @Author  : Kissablecho
+# @Software: Visual Studio Code
+# @Blog    : https://blog.ksable.top/
+# @Github  : https://github.com/God-2077/
+
 from astral import LocationInfo
 from astral.sun import sun
 from datetime import datetime
