@@ -25,5 +25,5 @@ python ***.py
 - [sunrise_sunset_info_v.25.05.02][2]
     - 第一个版本
 
-[1]: https://github.com/God-2077/python-code/tree/main/sunrise_sunset_info\/unrise_sunset_info_v.25.05.02.py
-[2]: https://github.com/God-2077/python-code/tree/main/sunrise_sunset_info\/unrise_sunset_info_v.25.05.02.py
+[1]: https://github.com/God-2077/python-code/tree/main/sunrise_sunset_info/sunrise_sunset_info_v.25.05.02.py
+[2]: https://github.com/God-2077/python-code/tree/main/sunrise_sunset_info/sunrise_sunset_info_v.25.05.02.py
