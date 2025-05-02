@@ -4,31 +4,35 @@
 
 **禁止任何人将代码用于违法行为**
 
-## 网易云音乐歌单批量下载歌曲
 
-[网易云音乐歌单批量下载歌曲][1]
+## [网易云音乐歌单批量下载歌曲][1]
 
 最新版：[v.24-10-06][2]
 
-## 键盘监听
 
-[键盘监听][4]
+## [键盘监听][4]
 
 最新版：[v.24.07.16][5]
 
-## psql_terminal
+
+## [psql_terminal][7]
 
 简单的 PostgreSQL 终端，可以执行 SQL 语句，如 `SELECT * FROM Websites;`
 
-[psql_terminal](./psql_terminal/readme.md)
 
-
-## FTP 服务器
+## [FTP 服务器][6]
 
 使用 Python 实现的简单 FTP 服务器，基于 pyftpdlib 库
 
-最新版：[ftp_server][6]
 
+## [Python爬虫 通用的小说下载器][8]
+
+一个使用Python编写的通用小说下载器
+
+
+## [日出日落信息计算][9]
+
+计算日出日落时间、方位角
 
 
 
@@ -36,4 +40,6 @@
 [2]: https://github.com/God-2077/python-code/blob/main/%E7%BD%91%E6%98%93%E4%BA%91%E9%9F%B3%E4%B9%90%E6%AD%8C%E5%8D%95%E6%89%B9%E9%87%8F%E4%B8%8B%E8%BD%BD%E6%AD%8C%E6%9B%B2/v.24-10-06.py
 [4]: https://github.com/God-2077/python-code/tree/main/键盘监听
 [5]: https://github.com/God-2077/python-code/tree/main/键盘监听/v.24.07.16.py
-[6]: https://github.com/God-2077/python-code/tree/main/ftp_server
+[6]: https://github.com/God-2077/python-code/tree/main/ftp_server/
+[8]: https://github.com/God-2077/python-code/tree/main/novel_crawler/
+[8]: https://github.com/God-2077/python-code/tree/main/sunrise_sunset_info/
