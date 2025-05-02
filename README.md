@@ -41,5 +41,6 @@
 [4]: https://github.com/God-2077/python-code/tree/main/键盘监听
 [5]: https://github.com/God-2077/python-code/tree/main/键盘监听/v.24.07.16.py
 [6]: https://github.com/God-2077/python-code/tree/main/ftp_server/
+[7]: https://github.com/God-2077/python-code/tree/main/psql_terminal/
 [8]: https://github.com/God-2077/python-code/tree/main/novel_crawler/
 [9]: https://github.com/God-2077/python-code/tree/main/sunrise_sunset_info/
