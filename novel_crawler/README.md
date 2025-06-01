@@ -7,7 +7,7 @@
 爬取小说章节内容页面, 保存到本地
 最后去阅读小说了
 
-最新版：[novel_crawler_v.24.12.01][1]
+最新版：[novel_crawler_v.25.02.03.py][3]
 
 ## 说明
 
@@ -16,7 +16,7 @@
 安装第三方库
 
 ```bash
-pip install markdownify beautifulsoup4 requests
+pip install -r requirements.txt
 ```
 
 运行
@@ -26,9 +26,12 @@ python ***.py
 ```
 
 ## 日志
+- [novel_crawler_v.25.02.03.py][3]
+    - 重构代码
 
 - [novel_crawler_v.24.12.01.py][2]
     - 第一个版本
 
 [1]: https://github.com/God-2077/python-code/tree/main/novel_crawler/novel_crawler_v.24.12.01.py
 [2]: https://github.com/God-2077/python-code/tree/main/ftp_server/novel_crawler/novel_crawler_v.24.12.01.py
+[3]: https://github.com/God-2077/python-code/tree/main/ftp_server/novel_crawler/novel_crawler_v.25.02.03.py
