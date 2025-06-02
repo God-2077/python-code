@@ -47,17 +47,28 @@ jobs:
         cd package
         python build.py config.yml
         
+    # - name: Create Release
+    #   id: create_release
+    #   uses: actions/create-release@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     tag_name: ${{ github.event.inputs.tag_name }}
+    #     release_name: ${{ github.event.inputs.release_name }}
+    #     draft: false
+    #     prerelease: false
+
     - name: Create Release
       id: create_release
-      uses: actions/create-release@v1
+      uses: softprops/action-gh-release@v1  # 使用更活跃维护的 release 操作
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ github.event.inputs.tag_name }}
-        release_name: ${{ github.event.inputs.release_name }}
+        name: ${{ github.event.inputs.release_name }}
+        generate_release_notes: true
         draft: false
         prerelease: false
-        
     # - name: Upload Release Assets
     #   uses: actions/upload-release-asset@v1
     #   env:
@@ -75,4 +86,5 @@ jobs:
       with:
         file: "./dist/*.exe;./dist/*/*.exe"
         release_id: ${{ steps.create_release.outputs.id }}
-        verbose: true
+        verbose: false
+        overwrite: true

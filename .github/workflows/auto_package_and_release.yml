@@ -76,4 +76,5 @@ jobs:
       with:
         file: "./dist/*.exe;./dist/*/*.exe"
         release_id: ${{ steps.create_release.outputs.id }}
-        verbose: true
+        verbose: false
+        overwrite: true
