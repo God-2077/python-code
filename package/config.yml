@@ -9,7 +9,8 @@
   icon: 
   windowed: False
   distpath: 'dist'
-  output-name: 'novel_crawler_v.25.06.82'
+  output-name: 'novel_crawler_v.25.06.02'
+
 - name: '键盘监听'
   python-file: '键盘监听\v.24.07.16.py'
   install-requirements: [
@@ -22,6 +23,7 @@
   windowed: False
   distpath: 'dist'
   output-name: 'Keyboard_monitoring_v.24.07.16.py'
+  
 - name: '网易云音乐歌单批量下载歌曲'
   python-file: '网易云音乐歌单批量下载歌曲\v.24-10-06'
   install-requirements: [
