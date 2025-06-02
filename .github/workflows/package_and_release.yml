@@ -27,7 +27,7 @@ jobs:
     
     - name: UPX Setup
       run: |
-        wget https://github.com/upx/upx/releases/download/v5.0.1/upx-5.0.1-win64.zip
+        curl -O https://github.com/upx/upx/releases/download/v5.0.1/upx-5.0.1-win64.zip
         unzip upx-5.0.1-win64.zip
         mv upx-5.0.1-win64 upx
         
