@@ -1,0 +1,70 @@
+name: Package and Release
+
+on:
+  push:
+    paths:
+      - 'package/config.yml'
+
+jobs:
+  package-and-release:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    
+    - name: Generate version tag
+      id: version
+      run: |
+        $date = Get-Date -Format "yy.MM.dd"
+        $tag = "v$date"
+        $release = "Release $date"
+        echo "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        echo "release_name=$release" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+    
+    - name: UPX Setup
+      run: |
+        mkdir upx
+        curl -o upx/upx.exe https://assets.ksable.top/github/upx/upx/v5.0.1/upx.exe
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller pyyaml
+
+    - name: Fix Python encoding (Windows)
+      run: |
+        # 设置Python使用UTF-8编码
+        [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
+        # 设置控制台编码为UTF-8
+        chcp.com 65001
+
+    - name: Run packaging script
+      run: |
+        cd package
+        python build.py config.yml
+        
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.version.outputs.tag }}
+        release_name: ${{ steps.version.outputs.release_name }}
+        draft: false
+        prerelease: false
+        
+    - name: Upload Release Assets
+      uses: xresloader/upload-to-github-release@main
+      env:
+       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        file: "./dist/*.exe;./dist/*/*.exe"
+        release_id: ${{ steps.create_release.outputs.id }}
+        verbose: true
