@@ -1,0 +1,19 @@
+- name: '1'
+  python-file: 'novel_crawler\novel_crawler_v.25.06.02.py'
+  install-requirements: [
+  ]
+  upx: False
+  icon: 
+  windowed: False
+  distpath: 'dist'
+  output-name: 'novel_crawler_v.25.06.82'
+# - name: '2'
+#   python-file: 'novel_crawler\novel_crawler_v.25.06.03.py'
+#   install-requirements: [
+#     'ebooklib'
+#   ]
+#   upx: true
+#   icon: 
+#   windowed: true
+#   distpath: 'dist'
+#   output-name: 'novel_crawler_v.25.06.03'

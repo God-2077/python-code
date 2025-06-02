@@ -1,50 +1,49 @@
-name: Package and Release EXE Files
+name: Package and Release
 
 on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Tag name for the release'
+        description: 'Tag name (e.g., v1.0.0)'
         required: true
-        default: 'v1.0.0'
+        type: string
       release_name:
-        description: 'Release name'
+        description: 'Release title'
         required: true
-        default: 'Release 1.0.0'
+        type: string
 
 jobs:
-  build:
-    runs-on: windows-2019
-
+  package-and-release:
+    runs-on: windows-latest
+    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-      with:
-        ref: main
-
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.x'
-
-    - name: Install PyInstaller
-      run: pip install pyinstaller
-
-    - name: Install Requirements
-      shell: pwsh
+        python-version: '3.12'
+    
+    - name: UPX Setup
       run: |
-        Get-ChildItem -Directory | ForEach-Object { $requirementsPath = "$($_.FullName)\requirements.txt"; if (Test-Path $requirementsPath) { try { pip install -r $requirementsPath } catch { Write-Error "Failed to install packages from $requirementsPath" } } }
-
-    - name: Package Python scripts to EXE
-      shell: pwsh
+        wget https://github.com/upx/upx/releases/download/v5.0.1/upx-5.0.1-win64.zip
+        unzip upx-5.0.1-win64.zip
+        mv upx-5.0.1-win64 upx
+        
+    - name: Install dependencies
       run: |
-        Get-ChildItem -Directory | ForEach-Object { $lastScript = Get-ChildItem -Path "$($_.FullName)" -Filter *.py | Sort-Object Name | Select-Object -Last 1; if ($lastScript) { $scriptName = [System.IO.Path]::GetFileNameWithoutExtension($lastScript.Name); $exeName = "$scriptName.exe"; pyinstaller --onefile --distpath "$($_.FullName)\dist" --workpath "$($_.FullName)\build" --specpath "$($_.FullName)\spec" "$($lastScript.FullName)" } }
-
-
-
+        python -m pip install --upgrade pip
+        pip install pyinstaller pyyaml
+        
+    - name: Run packaging script
+      run: |
+        cd package
+        python build.py config.yml
+        
     - name: Create Release
       id: create_release
-      uses: actions/create-release@latest
+      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -52,11 +51,13 @@ jobs:
         release_name: ${{ github.event.inputs.release_name }}
         draft: false
         prerelease: false
-
+        
     - name: Upload Release Assets
-      shell: pwsh
-      run: |
-        $releaseUrl = "${{ steps.create_release.outputs.upload_url }}"
-        Get-ChildItem -Recurse -Filter *.exe | ForEach-Object { gh release upload --clobber ${{ github.event.inputs.tag_name }} $_.FullName }
+      uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./package/dist/
+        asset_name: ${{ github.event.inputs.tag_name }}-binaries
+        asset_content_type: application/octet-stream
