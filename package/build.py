@@ -6,6 +6,10 @@ import argparse
 from pathlib import Path
 
 def main():
+    # 修复编码问题 - 设置UTF-8输出
+    sys.stdout.reconfigure(encoding='utf-8')  # Python 3.7+
+    sys.stderr.reconfigure(encoding='utf-8')
+    
     # 解析命令行参数
     parser = argparse.ArgumentParser(description='PyInstaller打包脚本')
     parser.add_argument('config', help='配置文件路径')
