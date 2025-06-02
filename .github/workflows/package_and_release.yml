@@ -27,9 +27,8 @@ jobs:
     
     - name: UPX Setup
       run: |
-        curl -O https://github.com/upx/upx/releases/download/v5.0.1/upx-5.0.1-win64.zip
-        unzip upx-5.0.1-win64.zip
-        mv upx-5.0.1-win64 upx
+        mkdir upx
+        curl -o upx/upx.exe https://assets.ksable.top/github/upx/upx/v5.0.1/upx.exe
         
     - name: Install dependencies
       run: |
