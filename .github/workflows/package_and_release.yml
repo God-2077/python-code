@@ -59,12 +59,16 @@ jobs:
         prerelease: false
         
     # 修复上传步骤 - 上传dist目录中的所有可执行文件
+    # 修复上传步骤 - 正确处理URL模板问题
     - name: Upload Release Assets
       run: |
         $releaseTag = "${{ github.event.inputs.tag_name }}"
         $uploadUrl = "${{ steps.create_release.outputs.upload_url }}"
         
-        # 获取所有可执行文件
+        # 移除URL中的模板部分
+        $uploadUrl = $uploadUrl -replace '\{\?.*\}', ''
+        
+        # 获取所有可执行文件（包括子目录）
         $exeFiles = Get-ChildItem -Path .\dist -Recurse -Filter *.exe
         
         foreach ($file in $exeFiles) {
