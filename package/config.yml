@@ -1,19 +1,81 @@
-- name: '1'
+- name: 'novel_crawler'
   python-file: 'novel_crawler\novel_crawler_v.25.06.02.py'
   install-requirements: [
+    'beautifulsoup4',
+    'requests',
+    'ebooklib'
   ]
-  upx: False
+  upx: true
   icon: 
   windowed: False
   distpath: 'dist'
   output-name: 'novel_crawler_v.25.06.82'
-# - name: '2'
-#   python-file: 'novel_crawler\novel_crawler_v.25.06.03.py'
-#   install-requirements: [
-#     'ebooklib'
-#   ]
-#   upx: true
-#   icon: 
-#   windowed: true
-#   distpath: 'dist'
-#   output-name: 'novel_crawler_v.25.06.03'
+- name: '键盘监听'
+  python-file: '键盘监听\v.24.07.16.py'
+  install-requirements: [
+    'keyboard',
+    'configparser',
+    'pywin32'
+  ]
+  upx: true
+  icon: 
+  windowed: False
+  distpath: 'dist'
+  output-name: 'Keyboard_monitoring_v.24.07.16.py'
+- name: '网易云音乐歌单批量下载歌曲'
+  python-file: '网易云音乐歌单批量下载歌曲\v.24-10-06'
+  install-requirements: [
+    'quote',
+    'requests',
+    'tabulate',
+    'mutagen'
+  ]
+  upx: true
+  icon: 
+  windowed: False
+  distpath: 'dist'
+  output-name: 'NetEase_Cloud_Music_Download_v24-10-06'
+
+- name: 'ftp_server'
+  python-file: 'ftp_server\ftp_server_v.25-05-02.py'
+  install-requirements: [
+    'pyftpdlib'
+  ]
+  upx: true
+  icon: 
+  windowed: False
+  distpath: 'dist'
+  output-name: 'ftp_server_v.25-05-02'
+
+- name: 'psql_terminal'
+  python-file: 'psql_terminal\psql_terminal.py'
+  install-requirements: [
+    'psycopg2'
+  ]
+  upx: true
+  icon: 
+  windowed: False
+  distpath: 'dist'
+  output-name: 'psql_terminal'
+
+- name: 'package'
+  python-file: 'package\build.py'
+  install-requirements: [
+    'pyinstaller'
+  ]
+  upx: true
+  icon: 
+  windowed: False
+  distpath: 'dist'
+  output-name: 'package_build'
+
+- name: 'sunrise_sunset_info'
+  python-file: 'sunrise_sunset_info\sunrise_sunset_info_v.25.05.02.py'
+  install-requirements: [
+    'pyftpdlib'
+  ]
+  upx: true
+  icon: 
+  windowed: False
+  distpath: 'dist'
+  output-name: 'sunrise_sunset_info'
