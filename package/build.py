@@ -24,6 +24,7 @@ def main():
     upx_dir = base_dir / './upx/'  # UPX目录
     
     success_count = 0
+    task_error_list = []
     # 遍历所有打包任务
     for i, task in enumerate(config, start=1):
         try:
@@ -97,11 +98,15 @@ def main():
                 print(f"打包失败，退出码: {result.returncode}")
         except Exception as e:
             print(f"任务[{i}/{len(config)} {task['name']}]失败: {e}")
+            task_error_list.append(task['name'])
             continue
     if success_count != 0:
         print(f"打包完成，成功打包 [{success_count}/{len(config)}] 个任务")
+        if task_error_list != []:
+            print(f"打包失败的任务: {', '.join(task_error_list)}")
     else:
         print("打包失败，没有成功打包任何任务")
+        print(f"失败的任务: {', '.join(task_error_list)}")
         sys.exit(1)
 
 if __name__ == '__main__':
