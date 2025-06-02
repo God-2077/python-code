@@ -58,12 +58,26 @@ jobs:
         draft: false
         prerelease: false
         
+    # 修复上传步骤 - 上传dist目录中的所有可执行文件
     - name: Upload Release Assets
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/*.exe
-        asset_name: ${{ github.event.inputs.tag_name }}-binaries
-        asset_content_type: application/octet-stream
+      run: |
+        $releaseTag = "${{ github.event.inputs.tag_name }}"
+        $uploadUrl = "${{ steps.create_release.outputs.upload_url }}"
+        
+        # 获取所有可执行文件
+        $exeFiles = Get-ChildItem -Path .\dist -Recurse -Filter *.exe
+        
+        foreach ($file in $exeFiles) {
+          $fileName = $file.Name
+          $filePath = $file.FullName
+          
+          Write-Host "Uploading: $fileName"
+          
+          # 使用curl上传文件
+          curl.exe --request POST `
+            --url "$uploadUrl?name=$fileName" `
+            --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" `
+            --header "Content-Type: application/octet-stream" `
+            --data-binary "@$filePath"
+        }
+      shell: pwsh
