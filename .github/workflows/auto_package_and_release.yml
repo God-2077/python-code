@@ -1,6 +1,7 @@
-name: Auto Package and Release
+name: Package and Release
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'package/config.yml'
@@ -9,10 +10,16 @@ jobs:
   package-and-release:
     runs-on: windows-latest
     
+    # 添加必要的权限
+    permissions:
+      contents: write  # 允许创建发布和上传资源
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+      with:
+        fetch-depth: 0  # 获取所有历史记录以便生成标签
+    
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -21,7 +28,8 @@ jobs:
     - name: Generate version tag
       id: version
       run: |
-        $date = Get-Date -Format "yy.MM.dd"
+        # 使用 UTC 时间确保一致性
+        $date = (Get-Date).ToUniversalTime().ToString("yy.MM.dd")
         $tag = "v$date"
         $release = "Release $date"
         echo "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
@@ -51,12 +59,13 @@ jobs:
         
     - name: Create Release
       id: create_release
-      uses: actions/create-release@v1
+      uses: softprops/action-gh-release@v1  # 使用更活跃维护的 release 操作
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ steps.version.outputs.tag }}
-        release_name: ${{ steps.version.outputs.release_name }}
+        name: ${{ steps.version.outputs.release_name }}
+        generate_release_notes: true
         draft: false
         prerelease: false
         
