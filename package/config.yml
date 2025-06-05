@@ -1,5 +1,5 @@
 - name: 'novel_crawler'
-  python-file: 'novel_crawler\novel_crawler_v.25.06.02.py'
+  python-file: 'novel_crawler\novel_crawler_v.25.06.05.py'
   install-requirements: [
     'beautifulsoup4',
     'requests',
@@ -9,7 +9,7 @@
   icon: 
   windowed: False
   distpath: 'dist'
-  output-name: 'novel_crawler_v.25.06.02'
+  output-name: 'novel_crawler_v.25.06.05'
 
 - name: '键盘监听'
   python-file: '键盘监听\v.24.07.16.py'

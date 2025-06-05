@@ -121,6 +121,9 @@ python ***.py config.yml
 
 ## 日志
 
+- [novel_crawler_v.25.06.05.py][5]
+    - 更新 epub 章节渲染模板
+
 - [novel_crawler_v.25.06.02.py][4]
     - 重构小说爬虫代码
     - 优化配置加载（使用yaml配置文件）
@@ -139,4 +142,5 @@ python ***.py config.yml
 [1]: https://github.com/God-2077/python-code/tree/main/novel_crawler/novel_crawler_v.24.12.01.py
 [2]: https://github.com/God-2077/python-code/tree/main/ftp_server/novel_crawler/novel_crawler_v.24.12.01.py
 [3]: https://github.com/God-2077/python-code/tree/main/ftp_server/novel_crawler/novel_crawler_v.25.02.03.py
-[3]: https://github.com/God-2077/python-code/tree/main/ftp_server/novel_crawler/novel_crawler_v.25.06.02.py
+[4]: https://github.com/God-2077/python-code/tree/main/ftp_server/novel_crawler/novel_crawler_v.25.06.02.py
+[5]: https://github.com/God-2077/python-code/tree/main/ftp_server/novel_crawler/novel_crawler_v.25.06.05.py
