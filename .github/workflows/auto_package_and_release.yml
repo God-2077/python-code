@@ -116,6 +116,7 @@ jobs:
         fi
 
     - name: Check if ./dist exists and has files (CMD)
+      if: ${{ matrix.os == 'windows-latest' || matrix.os == 'windows-11-arm' }}
       shell: cmd
       run: |
         if exist dist\ (
