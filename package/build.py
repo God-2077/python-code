@@ -36,7 +36,7 @@ def main():
     
     # 基础路径设置
     base_dir = Path(__file__).parent.parent  # 项目根目录
-    upx_dir = base_dir / './upx/'  # UPX目录
+    upx_dir = os.path.join(base_dir,'upx/')  # UPX目录
     
     success_count = 0
     task_error_list = []
@@ -48,8 +48,8 @@ def main():
             print(f"{'='*40}")
             
             # 解析任务参数
-            python_file = base_dir / task['python-file']
-            dist_path = base_dir / task['distpath']
+            python_file = os.path.join(base_dir, task['python-file'])
+            dist_path = os.path.join(base_dir,task['distpath'])
             requirements = task.get('install-requirements', [])
             use_upx = task.get('upx', False)
             icon = task.get('icon')

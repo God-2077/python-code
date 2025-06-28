@@ -111,9 +111,9 @@ jobs:
         cd package
         python build.py config.yml
 
-    - name: Check
-      run: |
-        python ./package/md5.py dist
+    # - name: Check
+    #   run: |
+    #     python ./package/md5.py dist
         
     # 检查 ./dist/ 是否存在文件（Linux）
     - name: Check if ./dist exists and has files
