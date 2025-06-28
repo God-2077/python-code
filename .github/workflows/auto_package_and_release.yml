@@ -65,19 +65,19 @@ jobs:
         python-version: '3.12'
     
     - name: UPX Setup(Windows amd64)
-      if: matrix.os == "windows-latest"
+      if: ${{ matrix.os == 'windows-latest' }}
       run: |
         mkdir upx
         curl -o upx/upx.exe https://assets.ksable.top/github/upx/upx/v5.0.1/upx.exe
     
     - name: UPX Setup(Linux amd64)
-      if: matrix.os == "ubuntu-latest"
+      if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
         mkdir upx
         curl -o upx/upx https://assets.ksable.top/github/upx/upx/v5.0.1/linux-amd64/upx
 
     - name: UPX Setup(Linux arm64)
-      if: matrix.os == "ubuntu-24.04-arm"
+      if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
       run: |
         mkdir upx
         curl -o upx/upx https://assets.ksable.top/github/upx/upx/v5.0.1/linux-arm64/upx
