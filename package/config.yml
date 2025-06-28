@@ -1,4 +1,9 @@
 - name: 'novel_crawler'
+  version: 'v.25.06.05'
+  os: [
+    'Windows',
+    'Linux'
+  ]
   python-file: 'novel_crawler\novel_crawler_v.25.06.05.py'
   install-requirements: [
     'beautifulsoup4',
@@ -9,9 +14,14 @@
   icon: 
   windowed: False
   distpath: 'dist'
-  output-name: 'novel_crawler_v.25.06.05'
+  output-name: '{{name}}_{{version}}_{{os}}_{{arch}}'
 
 - name: '键盘监听'
+  version: 'v.24.07.16'
+  os: [
+    'Windows',
+    'Linux'
+  ]
   python-file: '键盘监听\v.24.07.16.py'
   install-requirements: [
     'keyboard',
@@ -22,9 +32,14 @@
   icon: 
   windowed: False
   distpath: 'dist'
-  output-name: 'Keyboard_monitoring_v.24.07.16.py'
+  output-name: '{{name}}_{{version}}_{{os}}_{{arch}}'
 
 - name: '网易云音乐歌单批量下载歌曲'
+  version: 'v.24-10-06'
+  os: [
+    'Windows',
+    'Linux'
+  ]
   python-file: '网易云音乐歌单批量下载歌曲\v.24-10-06.py'
   install-requirements: [
     'quote',
@@ -36,9 +51,14 @@
   icon: 
   windowed: False
   distpath: 'dist'
-  output-name: 'NetEase_Cloud_Music_Download_v24-10-06'
+  output-name: '{{name}}_{{version}}_{{os}}_{{arch}}'
 
 - name: 'ftp_server'
+  version: 'v.25-05-02'
+  os: [
+    'Windows',
+    'Linux'
+  ]
   python-file: 'ftp_server\ftp_server_v.25-05-02.py'
   install-requirements: [
     'pyftpdlib'
@@ -47,31 +67,46 @@
   icon: 
   windowed: False
   distpath: 'dist'
-  output-name: 'ftp_server_v.25-05-02'
+  output-name: '{{name}}_{{version}}_{{os}}_{{arch}}'
 
-- name: 'psql_terminal'
-  python-file: 'psql_terminal\psql_terminal.py'
-  install-requirements: [
-    'psycopg2'
-  ]
-  upx: true
-  icon: 
-  windowed: False
-  distpath: 'dist'
-  output-name: 'psql_terminal'
+# - name: 'psql_terminal'
+#   version: 
+#   os: [
+#     'Windows',
+#     'Linux'
+#   ]
+#   python-file: 'psql_terminal\psql_terminal.py'
+#   install-requirements: [
+#     'psycopg2'
+#   ]
+#   upx: true
+#   icon: 
+#   windowed: False
+#   distpath: 'dist'
+#   output-name: '{{name}}_{{os}}_{{arch}}'
 
-- name: 'package'
-  python-file: 'package\build.py'
-  install-requirements: [
-    'pyinstaller'
-  ]
-  upx: true
-  icon: 
-  windowed: False
-  distpath: 'dist'
-  output-name: 'package_build'
+# - name: 'package'
+#   version:
+#   os: [
+#     'Windows',
+#     'Linux'
+#   ]
+#   python-file: 'package\build.py'
+#   install-requirements: [
+#     'pyinstaller'
+#   ]
+#   upx: true
+#   icon: 
+#   windowed: False
+#   distpath: 'dist'
+#   output-name: '{{name}}_{{version}}_{{os}}_{{arch}}'
 
 - name: 'sunrise_sunset_info'
+  version: 'v.25.05.02'
+  os: [
+    'Windows',
+    'Linux'
+  ]
   python-file: 'sunrise_sunset_info\sunrise_sunset_info_v.25.05.02.py'
   install-requirements: [
     'pyftpdlib'
@@ -80,4 +115,4 @@
   icon: 
   windowed: False
   distpath: 'dist'
-  output-name: 'sunrise_sunset_info'
+  output-name: '{{name}}_{{version}}_{{os}}_{{arch}}'
