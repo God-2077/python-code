@@ -106,7 +106,7 @@ jobs:
         
     # 检查 ./dist/ 是否存在文件（Linux）
     - name: Check if ./dist exists and has files
-      if: ${{ matrix.os == 'ubuntu-latest' or matrix.os == 'ubuntu-24.04-arm' }}
+      if: ${{ matrix.os == 'ubuntu-latest' || matrix.os == 'ubuntu-24.04-arm' }}
       run: |
         if [ -d "./dist" ] && [ -n "$(ls -A ./dist)" ]; then
           echo "havefilel=1" >> $GITHUB_ENV
@@ -127,7 +127,7 @@ jobs:
         echo havefile=0 >> "%GITHUB_ENV%"
 
     - name: Upload Release Assets
-      if: ${{ env.havefilew == '1' or env.havefilel =='1'}}
+      if: ${{ env.havefilew == '1' || env.havefilel =='1'}}
       uses: xresloader/upload-to-github-release@main
       env:
        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
