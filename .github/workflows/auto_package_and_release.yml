@@ -7,8 +7,46 @@ on:
       - 'package/config.yml'
 
 jobs:
-  package-and-release:
-    runs-on: windows-latest
+  release:
+    name: Checkout code
+    runs-on: ubuntu-latest
+    outputs:  # 新增 outputs 部分
+      release_id: ${{ steps.create_release.outputs.id }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # 获取所有历史记录以便生成标签
+    
+    - name: Generate version tag
+      id: version
+      run: |
+        # 使用 UTC 时间确保一致性
+        $date = (Get-Date).ToUniversalTime().ToString("yy.MM.dd")
+        $tag = "v$date"
+        $release = "Release $date"
+        echo "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        echo "release_name=$release" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-gh-release@v1  # 使用更活跃维护的 release 操作
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.version.outputs.tag }}
+        name: ${{ steps.version.outputs.release_name }}
+        generate_release_notes: true
+        draft: false
+        prerelease: false
+
+  package:
+    needs: release
+    strategy:
+      matrix:
+        os: [ubuntu-latest,	ubuntu-24.04-arm, windows-latest, windows-11-arm]
+
+    runs-on: ${{ matrix.os }}
     
     # 添加必要的权限
     permissions:
@@ -25,20 +63,23 @@ jobs:
       with:
         python-version: '3.12'
     
-    - name: Generate version tag
-      id: version
-      run: |
-        # 使用 UTC 时间确保一致性
-        $date = (Get-Date).ToUniversalTime().ToString("yy.MM.dd")
-        $tag = "v$date"
-        $release = "Release $date"
-        echo "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-        echo "release_name=$release" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-    
-    - name: UPX Setup
+    - name: UPX Setup(Windows amd64)
+      if: matrix.os == "windows-latest"
       run: |
         mkdir upx
         curl -o upx/upx.exe https://assets.ksable.top/github/upx/upx/v5.0.1/upx.exe
+    
+    - name: UPX Setup(Linux amd64)
+      if: matrix.os == "ubuntu-latest"
+      run: |
+        mkdir upx
+        curl -o upx/upx https://assets.ksable.top/github/upx/upx/v5.0.1/linux-amd64/upx
+
+    - name: UPX Setup(Linux arm64)
+      if: matrix.os == "ubuntu-24.04-arm"
+      run: |
+        mkdir upx
+        curl -o upx/upx https://assets.ksable.top/github/upx/upx/v5.0.1/linux-arm64/upx
         
     - name: Install dependencies
       run: |
@@ -46,6 +87,7 @@ jobs:
         pip install pyinstaller pyyaml
 
     - name: Fix Python encoding (Windows)
+      if: matrix.os == "windows-latest"
       run: |
         # 设置Python使用UTF-8编码
         [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
@@ -56,25 +98,17 @@ jobs:
       run: |
         cd package
         python build.py config.yml
-        
-    - name: Create Release
-      id: create_release
-      uses: softprops/action-gh-release@v1  # 使用更活跃维护的 release 操作
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.version.outputs.tag }}
-        name: ${{ steps.version.outputs.release_name }}
-        generate_release_notes: true
-        draft: false
-        prerelease: false
+
+    - name: Check
+      run: |
+        python ./package/md5.py dist
         
     - name: Upload Release Assets
       uses: xresloader/upload-to-github-release@main
       env:
        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        file: "./dist/*.exe;./dist/*/*.exe"
-        release_id: ${{ steps.create_release.outputs.id }}
+        file: "./dist/*.exe;./dist/*/*.exe;./dist/*"
+        release_id: ${{ needs.release.outputs.release_id }}  # 修正引用路径
         verbose: false
         overwrite: true

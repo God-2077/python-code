@@ -2,13 +2,28 @@ import os
 import sys
 import yaml
 import subprocess
+import platform
 import argparse
 from pathlib import Path
 
 def main():
+    print("="*50)
+    print("="*50)
     # 修复编码问题 - 设置UTF-8输出
     sys.stdout.reconfigure(encoding='utf-8')  # Python 3.7+
     sys.stderr.reconfigure(encoding='utf-8')
+
+    # 检查Python版本
+    if sys.version_info < (3, 7):
+        print("错误: 请使用Python 3.7或更高版本")
+        return
+    
+    Machine = platform.system()
+    arrch = platform.machine()
+
+    print(f"当前操作系统: {Machine} {arrch}")
+    print(f"平台详情: {platform.platform()}")
+    print(f"Python版本: {sys.version}")
     
     # 解析命令行参数
     parser = argparse.ArgumentParser(description='PyInstaller打包脚本')
@@ -34,12 +49,25 @@ def main():
             
             # 解析任务参数
             python_file = base_dir / task['python-file']
-            output_name = task['output-name']
             dist_path = base_dir / task['distpath']
             requirements = task.get('install-requirements', [])
             use_upx = task.get('upx', False)
             icon = task.get('icon')
             windowed = task.get('windowed', False)
+            name = task.get('name')
+            version = task.get('version')
+            output_name_template = task.get('output-name-template', '{{name}}_{{version}}_{{arch}}_{{os}}')
+            if arrch == "AMD64":
+                arrch = "x64"
+            output_name = output_name_template.replace('{{name}}', name).replace('{{version}}', version).replace('{{arch}}', arrch).replace('{{os}}', Machine)
+
+            # 检查操作系统和架构
+            if Machine.lower() not in task.get('os', []).lower():
+                print(f"警告: 任务 [{i}/{len(config)} {task['name']}] 不支持当前操作系统 {Machine}")
+                continue
+            # if arrch not in task.get('arch', []):
+            #     print(f"警告: 任务 [{i}/{len(config)} {task['name']}] 不支持当前架构 {arrch}")
+            #     continue
             
             # 检查Python文件是否存在
             if not python_file.exists():
