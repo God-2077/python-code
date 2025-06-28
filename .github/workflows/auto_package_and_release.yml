@@ -116,6 +116,7 @@ jobs:
         fi
 
     - name: Check if ./dist exists and has files (CMD)
+      shell: cmd
       run: |
         if exist dist\ (
           cd dist
