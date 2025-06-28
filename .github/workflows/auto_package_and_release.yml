@@ -8,7 +8,7 @@ on:
 
 jobs:
   release:
-    name: Checkout code
+    name: release
     runs-on: ubuntu-latest
     outputs:  # 新增 outputs 部分
       release_id: ${{ steps.create_release.outputs.id }}
@@ -42,6 +42,7 @@ jobs:
 
   package:
     needs: release
+    name: package
     strategy:
       matrix:
         os: [ubuntu-latest,	ubuntu-24.04-arm, windows-latest, windows-11-arm]
