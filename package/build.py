@@ -70,7 +70,7 @@ def main():
             #     continue
             
             # 检查Python文件是否存在
-            if not python_file.exists():
+            if not os.path.exists(python_file):
                 print(f"错误: Python文件不存在 {python_file}")
                 continue
             
