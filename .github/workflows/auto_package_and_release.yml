@@ -104,7 +104,30 @@ jobs:
       run: |
         python ./package/md5.py dist
         
+    # 检查 ./dist/ 是否存在文件（Linux）
+    - name: Check if ./dist exists and has files
+      if: ${{ matrix.os == 'ubuntu-latest' or matrix.os == 'ubuntu-24.04-arm' }}
+      run: |
+        if [ -d "./dist" ] && [ -n "$(ls -A ./dist)" ]; then
+          echo "havefilel=1" >> $GITHUB_ENV
+
+        else
+          echo "havefilel=0" >> $GITHUB_ENV
+        fi
+
+    - name: Check if ./dist exists and has files (CMD)
+      run: |
+        if exist dist\ (
+          cd dist
+          for /f "delims=" %%a in ('dir /b 2^>nul') do (
+            echo havefilew=1 >> "%GITHUB_ENV%"
+            exit /b 0
+          )
+        )
+        echo havefile=0 >> "%GITHUB_ENV%"
+
     - name: Upload Release Assets
+      if: ${{ env.havefilew == '1' or env.havefilel =='1'}}
       uses: xresloader/upload-to-github-release@main
       env:
        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
