@@ -88,7 +88,7 @@ jobs:
         pip install pyinstaller pyyaml
 
     - name: Fix Python encoding (Windows)
-      if: ${{ matrix.os == "windows-latest" }}
+      if: ${{ matrix.os == 'windows-latest' }}
       run: |
         # 设置Python使用UTF-8编码
         [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
