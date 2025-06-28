@@ -62,7 +62,7 @@ def main():
             output_name = output_name_template.replace('{{name}}', name).replace('{{version}}', version).replace('{{arch}}', arrch).replace('{{os}}', Machine)
 
             # 检查操作系统和架构
-            if Machine.lower() not in task.get('os', []).lower():
+            if Machine.lower() not in task.get('os', []):
                 print(f"警告: 任务 [{i}/{len(config)} {task['name']}] 不支持当前操作系统 {Machine}")
                 continue
             # if arrch not in task.get('arch', []):
