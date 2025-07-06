@@ -1,0 +1,65 @@
+name: Package and Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dev
+    paths:
+      - 'package/config.yml'
+
+jobs:
+  package:
+    strategy:
+      matrix:
+        os: [windows-latest, windows-11-arm]
+    runs-on: os.${{ matrix.os }}
+    
+    # 添加必要的权限
+    permissions:
+      contents: write  # 允许创建发布和上传资源
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # 获取所有历史记录以便生成标签
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    
+    - name: UPX Setup(Windows amd64)
+      if: ${{ matrix.os == 'windows-latest' }}
+      run: |
+        mkdir upx
+        curl -o upx/upx.exe https://assets.ksable.top/github/upx/upx/v5.0.1/windows-amd64/upx.exe
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller pyyaml
+
+    - name: Fix Python encoding (Windows)
+      run: |
+        # 设置Python使用UTF-8编码
+        [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
+        # 设置控制台编码为UTF-8
+        chcp.com 65001
+
+    - name: Run packaging script
+      run: |
+        cd package
+        python build.py config.yml
+        
+    - name: Upload files with wildcards
+      uses: actions/upload-artifact@v4
+      with:
+        name: Artifact
+        path: |
+          ./dist/*.exe
+          ./dist/*.zip
+        retention-days: 90
+        if-no-files-found: warn
+        overwrite: true
