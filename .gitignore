@@ -197,3 +197,5 @@ cython_debug/
 .bak
 .temp
 temp/
+.vscode/
+.idea/

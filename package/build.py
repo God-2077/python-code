@@ -36,7 +36,7 @@ def main():
     
     # 基础路径设置
     base_dir = Path(__file__).parent.parent  # 项目根目录
-    upx_dir = os.path.join(base_dir,'upx/')  # UPX目录
+    upx_dir = base_dir / './upx/'  # UPX目录
     
     success_count = 0
     task_error_list = []
@@ -48,8 +48,8 @@ def main():
             print(f"{'='*40}")
             
             # 解析任务参数
-            python_file = os.path.join(base_dir, task['python-file'])
-            dist_path = os.path.join(base_dir,task['distpath'])
+            python_file = base_dir / task['python-file']
+            dist_path = base_dir / task['distpath']
             requirements = task.get('install-requirements', [])
             use_upx = task.get('upx', False)
             icon = task.get('icon')
@@ -62,15 +62,15 @@ def main():
             output_name = output_name_template.replace('{{name}}', name).replace('{{version}}', version).replace('{{arch}}', arrch).replace('{{os}}', Machine)
 
             # 检查操作系统和架构
-            if Machine not in task.get('os', []):
-                print(f"警告: 任务 [{i}/{len(config)} {task['name']}] 不支持当前操作系统 {Machine}")
-                continue
+            # if Machine not in task.get('os', []):
+            #     print(f"警告: 任务 [{i}/{len(config)} {task['name']}] 不支持当前操作系统 {Machine}")
+            #     continue
             # if arrch not in task.get('arch', []):
             #     print(f"警告: 任务 [{i}/{len(config)} {task['name']}] 不支持当前架构 {arrch}")
             #     continue
             
             # 检查Python文件是否存在
-            if not os.path.exists(python_file):
+            if not python_file.exists():
                 print(f"错误: Python文件不存在 {python_file}")
                 continue
             
