@@ -1,13 +1,13 @@
 ## Python爬虫 通用的小说下载器
 
-[Posts: Python爬虫 通用的小说下载器](https://blog.ksable.top/2025/02/03/posts-python-pa-chong-tong-yong-de-xiao-shuo-xia-zai-qi/?keyword=%E5%B0%8F%E8%AF%B4)
+[Posts: Python爬虫 通用的小说下载器](https://blog.ksable.top/2025/02/03/posts-python-pa-chong-tong-yong-de-xiao-shuo-xia-zai-qi/)
 
 爬取小说详情页面, 获取小说名称、作者、简介、章节目录等信息
 爬取小说章节目录页面, 获取小说所有章节的名称和 URL
 爬取小说章节内容页面, 保存到本地
 最后去阅读小说了
 
-最新版：[novel_crawler_v.25.07.06][6]
+最新版：[novel_crawler_v.25.07.07][7]
 
 ## 说明
 
@@ -109,9 +109,13 @@ network:
   
   # 失败重试次数
   max_retries: 5
+
+  # 多线程模式，r
+  multi_threading: True # 多线程模式
+  thread_count: 32 # 线程数量
   
-  # 请求间隔时间(毫秒)
-  request_interval_ms: 1000
+  # 每分钟请求量，设为 None 则不限制
+  request_interval_time: 1000
 ```
 运行
 
@@ -120,6 +124,9 @@ python ***.py config.yml
 ```
 
 ## 日志
+
+- [novel_crawler_v.25.07.07][7]
+    - 新增多线程下载模式
 
 - [novel_crawler_v.25.07.06][6]
     - 使用 rich 库增强输出
@@ -157,3 +164,4 @@ python ***.py config.yml
 [4]: novel_crawler_v.25.06.02.py
 [5]: novel_crawler_v.25.06.05.py
 [6]: novel_crawler_v.25.07.06.py
+[7]: novel_crawler_v.25.07.07.py
