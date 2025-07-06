@@ -1,6 +1,6 @@
 - name: 'novel_crawler'
-  version: 'v.25.07.06'
-  python-file: 'novel_crawler\novel_crawler_v.25.07.06.py'
+  version: 'v.25.07.07'
+  python-file: 'novel_crawler\novel_crawler_v.25.07.07.py'
   install-requirements: [
     'beautifulsoup4',
     'requests',
