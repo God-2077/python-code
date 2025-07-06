@@ -7,6 +7,7 @@
     'ebooklib'
   ]
   upx: true
+  onefile: 2 # 0:文件夹 1:单文件 2:两者
   icon: 
   windowed: False
   distpath: 'dist'
@@ -21,6 +22,7 @@
     'pywin32'
   ]
   upx: true
+  onefile: 1
   icon: 
   windowed: False
   distpath: 'dist'
@@ -36,6 +38,7 @@
     'mutagen'
   ]
   upx: true
+  onefile: 1
   icon: 
   windowed: False
   distpath: 'dist'
@@ -48,6 +51,7 @@
     'pyftpdlib'
   ]
   upx: true
+  onefile: 1
   icon: 
   windowed: False
   distpath: 'dist'
@@ -92,6 +96,7 @@
     'pyftpdlib'
   ]
   upx: true
+  onefile: 1 # 0:文件夹 1:单文件 2:两者
   icon: 
   windowed: False
   distpath: 'dist'
