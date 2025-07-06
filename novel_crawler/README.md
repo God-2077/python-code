@@ -7,7 +7,7 @@
 爬取小说章节内容页面, 保存到本地
 最后去阅读小说了
 
-最新版：[novel_crawler_v.25.06.05.py][5]
+最新版：[novel_crawler_v.25.07.06][6]
 
 ## 说明
 
@@ -77,7 +77,7 @@ rules:
   novel_chapter_content_div: 'div.content'
   
   # 小说单段规则(相对于小说章节内容区域)
-  novel_chapter_content_p: 'p'  # 可以是 p, div, span 等
+  novel_chapter_content_p: 'p'  # 可以是 br, p, div, span 等
   
   # 小说净化内容配置
   purify:
@@ -121,6 +121,12 @@ python ***.py config.yml
 
 ## 日志
 
+- [novel_crawler_v.25.07.06][6]
+    - 使用 rich 库增强输出
+    - 增加对 br 标签的特殊处理逻辑
+    - 排除目录 JS 链接
+    - 若干优化
+
 - [novel_crawler_v.25.06.05.py][5]
     - 更新 epub 章节渲染模板
 
@@ -139,8 +145,15 @@ python ***.py config.yml
 - [novel_crawler_v.24.12.01.py][2]
     - 第一个版本
 
-[1]: https://github.com/God-2077/python-code/tree/main/novel_crawler/novel_crawler_v.24.12.01.py
-[2]: https://github.com/God-2077/python-code/tree/main/ftp_server/novel_crawler/novel_crawler_v.24.12.01.py
-[3]: https://github.com/God-2077/python-code/tree/main/ftp_server/novel_crawler/novel_crawler_v.25.02.03.py
-[4]: https://github.com/God-2077/python-code/tree/main/ftp_server/novel_crawler/novel_crawler_v.25.06.02.py
-[5]: https://github.com/God-2077/python-code/tree/main/ftp_server/novel_crawler/novel_crawler_v.25.06.05.py
+<!-- [1]: novel_crawler_v.24.12.01.py
+[2]: novel_crawler_v.24.12.01.py
+[3]: novel_crawler_v.25.02.03.py
+[4]: novel_crawler_v.25.06.02.py
+[5]: novel_crawler_v.25.06.05.py
+[5]: novel_crawler_v.25.06.05.py -->
+[1]: novel_crawler_v.24.12.01.py
+[2]: novel_crawler_v.24.12.01.py
+[3]: novel_crawler_v.25.02.03.py
+[4]: novel_crawler_v.25.06.02.py
+[5]: novel_crawler_v.25.06.05.py
+[6]: novel_crawler_v.25.07.06.py
