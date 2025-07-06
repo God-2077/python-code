@@ -1,10 +1,11 @@
 - name: 'novel_crawler'
-  version: 'v.25.06.05'
-  python-file: 'novel_crawler\novel_crawler_v.25.06.05.py'
+  version: 'v.25.07.06'
+  python-file: 'novel_crawler\novel_crawler_v.25.07.06.py'
   install-requirements: [
     'beautifulsoup4',
     'requests',
-    'ebooklib'
+    'ebooklib',
+    'rich'
   ]
   upx: true
   onefile: 2 # 0:文件夹 1:单文件 2:两者
