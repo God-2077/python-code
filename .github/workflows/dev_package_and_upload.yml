@@ -1,4 +1,6 @@
-name: Package and Release
+name: Dev Package and Upload(dev)
+
+
 
 on:
   workflow_dispatch:

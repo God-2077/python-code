@@ -1,4 +1,5 @@
-name: Package and Release
+name: Auto Package and Release
+
 
 on:
   workflow_dispatch:
