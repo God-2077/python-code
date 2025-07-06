@@ -105,14 +105,17 @@ def main():
                     print(f"警告: 图标文件不存在 {icon_path}")
             
             # 添加UPX选项
-            if use_upx:
-                if upx_dir.exists():
-                    cmd.extend(['--upx-dir', str(upx_dir)])
-                    print(f"使用UPX压缩: {upx_dir}")
-                else:
-                    print(f"警告: UPX目录不存在 {upx_dir}")
+            if arrch == "ARM64":
+                print("UPX不支持当前架构")
             else:
-                print("不使用UPX压缩")
+                if use_upx:
+                    if upx_dir.exists():
+                        cmd.extend(['--upx-dir', str(upx_dir)])
+                        print(f"使用UPX压缩: {upx_dir}")
+                    else:
+                        print(f"警告: UPX目录不存在 {upx_dir}")
+                else:
+                    print("不使用UPX压缩")
             
             # 添加单文件打包选项
             if onefile == 0:

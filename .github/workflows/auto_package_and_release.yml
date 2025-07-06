@@ -1,4 +1,4 @@
-name: Auto Package and Release
+name: Package and Release
 
 on:
   workflow_dispatch:
@@ -7,16 +7,26 @@ on:
       - 'package/config.yml'
 
 jobs:
-  release:
-    name: release
-    runs-on: windows-latest
-    outputs:  # 新增 outputs 部分
-      release_id: ${{ steps.create_release.outputs.id }}
+  package-and-release:
+    strategy:
+      matrix:
+        os: [windows-latest, windows-11-arm]
+    runs-on: os.${{ matrix.os }}
+    
+    # 添加必要的权限
+    permissions:
+      contents: write  # 允许创建发布和上传资源
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
         fetch-depth: 0  # 获取所有历史记录以便生成标签
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
     
     - name: Generate version tag
       id: version
@@ -27,7 +37,30 @@ jobs:
         $release = "Release $date"
         echo "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         echo "release_name=$release" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+    
+    - name: UPX Setup(Windows amd64)
+      if: ${{ matrix.os == 'windows-latest' }}
+      run: |
+        mkdir upx
+        curl -o upx/upx.exe https://assets.ksable.top/github/upx/upx/v5.0.1/windows-amd64/upx.exe
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller pyyaml
 
+    - name: Fix Python encoding (Windows)
+      run: |
+        # 设置Python使用UTF-8编码
+        [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
+        # 设置控制台编码为UTF-8
+        chcp.com 65001
+
+    - name: Run packaging script
+      run: |
+        cd package
+        python build.py config.yml
+        
     - name: Create Release
       id: create_release
       uses: softprops/action-gh-release@v1  # 使用更活跃维护的 release 操作
@@ -39,113 +72,12 @@ jobs:
         generate_release_notes: true
         draft: false
         prerelease: false
-
-  package:
-    needs: release
-    name: package
-    strategy:
-      matrix:
-        os: [ubuntu-latest,	ubuntu-24.04-arm, windows-latest, windows-11-arm]
-
-    runs-on: ${{ matrix.os }}
-    
-    # 添加必要的权限
-    permissions:
-      contents: write  # 允许创建发布和上传资源
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # 获取所有历史记录以便生成标签
-
-    - name: Tree (linux)
-      if: ${{ matrix.os == 'ubuntu-latest' || matrix.os == 'ubuntu-24.04-arm' }}
-      run: |
-        pwd
-        tree
-
-    - name: Tree (Windows)
-      if: ${{ matrix.os == 'windows-latest' || matrix.os == 'windows-11-arm' }}
-      run: |
-        chdir
-        tree
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-    
-    - name: UPX Setup(Windows amd64)
-      if: ${{ matrix.os == 'windows-latest' }}
-      run: |
-        mkdir upx
-        curl -o upx/upx.exe https://assets.ksable.top/github/upx/upx/v5.0.1/upx.exe
-    
-    - name: UPX Setup(Linux amd64)
-      if: ${{ matrix.os == 'ubuntu-latest' }}
-      run: |
-        mkdir upx
-        curl -o upx/upx https://assets.ksable.top/github/upx/upx/v5.0.1/linux-amd64/upx
-
-    - name: UPX Setup(Linux arm64)
-      if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
-      run: |
-        mkdir upx
-        curl -o upx/upx https://assets.ksable.top/github/upx/upx/v5.0.1/linux-arm64/upx
         
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pyinstaller pyyaml
-
-    - name: Fix Python encoding (Windows)
-      if: ${{ matrix.os == 'windows-latest' || matrix.os == 'windows-11-arm'}}
-      run: |
-        # 设置Python使用UTF-8编码
-        [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
-        # 设置控制台编码为UTF-8
-        chcp.com 65001
-
-    - name: Run packaging script
-      run: |
-        cd package
-        python build.py config.yml
-
-    # - name: Check
-    #   run: |
-    #     python ./package/md5.py dist
-        
-    # 检查 ./dist/ 是否存在文件（Linux）
-    - name: Check if ./dist exists and has files
-      if: ${{ matrix.os == 'ubuntu-latest' || matrix.os == 'ubuntu-24.04-arm' }}
-      run: |
-        if [ -d "./dist" ] && [ -n "$(ls -A ./dist)" ]; then
-          echo "havefilel=1" >> $GITHUB_ENV
-
-        else
-          echo "havefilel=0" >> $GITHUB_ENV
-        fi
-
-    - name: Check if ./dist exists and has files (CMD)
-      if: ${{ matrix.os == 'windows-latest' || matrix.os == 'windows-11-arm' }}
-      shell: cmd
-      run: |
-        if exist dist\ (
-          cd dist
-          for /f "delims=" %%a in ('dir /b 2^>nul') do (
-            echo havefilew=1 >> "%GITHUB_ENV%"
-            exit /b 0
-          )
-        )
-        echo havefile=0 >> "%GITHUB_ENV%"
-
     - name: Upload Release Assets
-      if: ${{ env.havefilew == '1' || env.havefilel =='1'}}
       uses: xresloader/upload-to-github-release@main
       env:
        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        file: "./dist/*.exe;./dist/*/*.exe;./dist/*"
-        release_id: ${{ needs.release.outputs.release_id }}  # 修正引用路径
-        verbose: false
-        overwrite: true
+        file: "./dist/*.exe;./dist/*.zip"
+        release_id: ${{ steps.create_release.outputs.id }}
+        verbose: true
