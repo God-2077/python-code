@@ -3,11 +3,45 @@ name: Package and Release
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - 'package/config.yml'
 
 jobs:
-  package-and-release:
+  release:
+    name: release
+    runs-on: windows-latest
+    outputs:  # 新增 outputs 部分
+      release_id: ${{ steps.create_release.outputs.id }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # 获取所有历史记录以便生成标签
+    
+    - name: Generate version tag
+      id: version
+      run: |
+        # 使用 UTC 时间确保一致性
+        $date = (Get-Date).ToUniversalTime().ToString("yy.MM.dd")
+        $tag = "v$date"
+        $release = "Release $date"
+        echo "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        echo "release_name=$release" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-gh-release@v1  # 使用更活跃维护的 release 操作
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.version.outputs.tag }}
+        name: ${{ steps.version.outputs.release_name }}
+        generate_release_notes: true
+        draft: false
+        prerelease: false
+  package:
     strategy:
       matrix:
         os: [windows-latest, windows-11-arm]
@@ -27,16 +61,6 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
-    
-    - name: Generate version tag
-      id: version
-      run: |
-        # 使用 UTC 时间确保一致性
-        $date = (Get-Date).ToUniversalTime().ToString("yy.MM.dd")
-        $tag = "v$date"
-        $release = "Release $date"
-        echo "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-        echo "release_name=$release" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
     
     - name: UPX Setup(Windows amd64)
       if: ${{ matrix.os == 'windows-latest' }}
@@ -61,23 +85,12 @@ jobs:
         cd package
         python build.py config.yml
         
-    - name: Create Release
-      id: create_release
-      uses: softprops/action-gh-release@v1  # 使用更活跃维护的 release 操作
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.version.outputs.tag }}
-        name: ${{ steps.version.outputs.release_name }}
-        generate_release_notes: true
-        draft: false
-        prerelease: false
-        
-    - name: Upload Release Assets
+    - name: Upload Release Assets}
       uses: xresloader/upload-to-github-release@main
       env:
        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         file: "./dist/*.exe;./dist/*.zip"
-        release_id: ${{ steps.create_release.outputs.id }}
-        verbose: true
+        release_id: ${{ needs.release.outputs.release_id }}
+        verbose: false
+        overwrite: true
