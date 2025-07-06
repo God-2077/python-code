@@ -4,6 +4,7 @@
 
 **禁止任何人将代码用于违法行为**
 
+[![Auto Package and Release](https://github.com/God-2077/python-code/actions/workflows/auto_package_and_release.yml/badge.svg)](https://github.com/God-2077/python-code/actions/workflows/auto_package_and_release.yml)[![Dev Package and Upload(dev)](https://github.com/God-2077/python-code/actions/workflows/dev_package_and_upload.yml/badge.svg?branch=dev)](https://github.com/God-2077/python-code/actions/workflows/dev_package_and_upload.yml)
 
 ## [网易云音乐歌单批量下载歌曲][1]
 
