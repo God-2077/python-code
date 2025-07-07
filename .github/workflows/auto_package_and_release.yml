@@ -1,6 +1,5 @@
 name: Auto Package and Release
 
-
 on:
   workflow_dispatch:
   push:
@@ -10,16 +9,21 @@ on:
       - 'package/config.yml'
 
 jobs:
-  release:
-    name: release
+  package-and-release:
     runs-on: windows-latest
-    outputs:  # 新增 outputs 部分
-      release_id: ${{ steps.create_release.outputs.id }}
+    
+    # 添加必要的权限
+    permissions:
+      contents: write  # 允许创建发布和上传资源
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
       with:
-        fetch-depth: 0  # 获取所有历史记录以便生成标签
+        python-version: '3.12'
     
     - name: Generate version tag
       id: version
@@ -30,44 +34,8 @@ jobs:
         $release = "Release $date"
         echo "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         echo "release_name=$release" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-
-    - name: Create Release
-      id: create_release
-      uses: softprops/action-gh-release@v1  # 使用更活跃维护的 release 操作
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.version.outputs.tag }}
-        name: ${{ steps.version.outputs.release_name }}
-        generate_release_notes: true
-        draft: false
-        prerelease: false
-        fail_on_unmatched_files: true
-        
-  package:
-    needs: release
-    strategy:
-      matrix:
-        os: [windows-latest, windows-11-arm]
-    runs-on: os.${{ matrix.os }}
     
-    # 添加必要的权限
-    permissions:
-      contents: write  # 允许创建发布和上传资源
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      # with:
-      #   fetch-depth: 0  # 获取所有历史记录以便生成标签
-    
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-    
-    - name: UPX Setup(Windows amd64)
-      if: ${{ matrix.os == 'windows-latest' }}
+    - name: UPX Setup
       run: |
         mkdir upx
         curl -o upx/upx.exe https://assets.ksable.top/github/upx/upx/v5.0.1/windows-amd64/upx.exe
@@ -89,12 +57,26 @@ jobs:
         cd package
         python build.py config.yml
         
-    - name: Upload Release Assets}
-      uses: xresloader/upload-to-github-release@main
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-gh-release@v1  # 使用更活跃维护的 release 操作
       env:
-       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        file: "./dist/*.exe;./dist/*.zip"
-        release_id: ${{ needs.release.outputs.release_id }}
-        verbose: false
-        overwrite: true
+        tag_name: ${{ steps.version.outputs.tag }}
+        name: ${{ steps.version.outputs.release_name }}
+        generate_release_notes: true
+        draft: false
+        prerelease: false
+        files: |
+          dist/*.exe
+        
+    # - name: Upload Release Assets
+    #   uses: xresloader/upload-to-github-release@main
+    #   env:
+    #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     file: "./dist/*.exe"
+    #     release_id: ${{ steps.create_release.outputs.id }}
+    #     verbose: false
+    #     overwrite: true

@@ -1,6 +1,4 @@
-name: Dev Package and Upload(dev)
-
-
+name: Auto Package and Release
 
 on:
   workflow_dispatch:
@@ -11,11 +9,8 @@ on:
       - 'package/config.yml'
 
 jobs:
-  package:
-    strategy:
-      matrix:
-        os: [windows-latest, windows-11-arm]
-    runs-on: os.${{ matrix.os }}
+  package-and-release:
+    runs-on: windows-latest
     
     # 添加必要的权限
     permissions:
@@ -24,16 +19,13 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # 获取所有历史记录以便生成标签
     
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
     
-    - name: UPX Setup(Windows amd64)
-      if: ${{ matrix.os == 'windows-latest' }}
+    - name: UPX Setup
       run: |
         mkdir upx
         curl -o upx/upx.exe https://assets.ksable.top/github/upx/upx/v5.0.1/windows-amd64/upx.exe
@@ -61,7 +53,6 @@ jobs:
         name: Artifact
         path: |
           ./dist/*.exe
-          ./dist/*.zip
         retention-days: 90
         if-no-files-found: warn
         overwrite: true
