@@ -1,4 +1,4 @@
-name: Auto Package and Release
+name: Dev Package and Upload(dev)
 
 on:
   workflow_dispatch:
@@ -17,6 +17,10 @@ jobs:
       contents: write  # 允许创建发布和上传资源
     
     steps:
+    - name: Set Timezone to China Standard Time
+      run: tzutil /s "China Standard Time"
+      shell: pwsh
+
     - name: Checkout code
       uses: actions/checkout@v4
     
