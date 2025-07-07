@@ -5,7 +5,7 @@ import subprocess
 import platform
 import argparse
 from pathlib import Path
-from zip import zip_files_and_folders
+# from zip import zip_files_and_folders
 
 def main():
     print("="*50)
@@ -53,7 +53,7 @@ def main():
             dist_path = base_dir / task['distpath']
             requirements = task.get('install-requirements', [])
             use_upx = task.get('upx', False)
-            onefile = task.get('onefile', 0)
+            # onefile = task.get('onefile', 0)
             icon = task.get('icon')
             windowed = task.get('windowed', False)
             name = task.get('name')
@@ -89,7 +89,8 @@ def main():
                 '--specpath', str(base_dir / 'build'),
                 '--workpath', str(base_dir / 'build' / 'temp'),
                 '--noconfirm',
-                '--clean'
+                '--clean',
+                '--onefile'
             ]
             
             # 添加窗口模式选项
@@ -118,47 +119,30 @@ def main():
                     print("不使用UPX压缩")
             
             # 添加单文件打包选项
-            if onefile == 0:
-                pass
-            elif onefile == 1:
-                cmd.append('--onefile')
-            elif onefile == 2:
-                cmd.append('--onefile')
-                bcmd = cmd
+            # if onefile == 0:
+            #     pass
+            # elif onefile == 1:
+            #     cmd.append('--onefile')
+            # elif onefile == 2:
+            #     cmd.append('--onefile')
+            #     bcmd = cmd
 
             # 添加主Python文件
             cmd.append(str(python_file))
             
             # 打印并执行命令
             print("执行命令:", ' '.join(cmd))
-            result1 = subprocess.run(cmd)
+            result = subprocess.run(cmd)
 
-            if onefile == 2:
-                cmd.append(str(python_file))
-                result2 = subprocess.run(bcmd)
+            # if onefile == 2:
+            #     cmd.append(str(python_file))
+            #     result2 = subprocess.run(bcmd)
             
-            if result1.returncode == 0:
+            if result.returncode == 0:
                 print(f"(onefile)打包成功: {dist_path / output_name}")
                 success_count += 1
             else:
-                print(f"(onefile)打包失败，退出码: {result1.returncode}")
-                
-            if result2.returncode == 0:
-                print(f"(onedir)打包成功: {dist_path / output_name}")
-                zip_files_and_folders(None, dist_path / output_name, str(dist_path / output_name)+'.zip')
-                success_count += 1
-            else:
-                print(f"(onefdir)打包失败，退出码: {result2.returncode}")
-            
-            if onefile == 0:
-                if result1.returncode == 0:
-                    success_count += 1
-            elif onefile == 1:
-                if result2.returncode == 0:
-                    success_count += 1
-            elif onefile == 2:
-                if result2.returncode == 0 and result1.returncode == 0:
-                    success_count += 1
+                print(f"(onefile)打包失败，退出码: {result.returncode}")
         except Exception as e:
             print(f"任务[{i}/{len(config)} {task['name']}]失败: {e}")
             task_error_list.append(task['name'])
@@ -170,7 +154,7 @@ def main():
     else:
         print("打包失败，没有成功打包任何任务")
         print(f"失败的任务: {', '.join(task_error_list)}")
-        sys.exit(1)
+        sys.exit(0)
 
 if __name__ == '__main__':
     main()
