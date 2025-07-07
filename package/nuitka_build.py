@@ -126,7 +126,7 @@ def main():
     else:
         print("打包失败，没有成功打包任何任务")
         print(f"失败的任务: {', '.join(task_error_list)}")
-        sys.exit(0)
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()
