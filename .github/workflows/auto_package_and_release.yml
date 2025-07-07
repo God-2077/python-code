@@ -43,6 +43,7 @@ jobs:
         draft: false
         prerelease: false
   package:
+    needs: release
     strategy:
       matrix:
         os: [windows-latest, windows-11-arm]
