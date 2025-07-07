@@ -14,7 +14,7 @@
   distpath: 'dist'
   output-name: '{{name}}_{{version}}_{{os}}_{{arch}}'
 
-- name: '键盘监听'
+- name: 'Keyboard_monitoring'
   version: 'v.24.07.16'
   python-file: '键盘监听\v.24.07.16.py'
   install-requirements: [
@@ -29,7 +29,7 @@
   distpath: 'dist'
   output-name: '{{name}}_{{version}}_{{os}}_{{arch}}'
 
-- name: '网易云音乐歌单批量下载歌曲'
+- name: 'NetEase_Cloud_Music_Download'
   version: 'v.24-10-06'
   python-file: '网易云音乐歌单批量下载歌曲\v.24-10-06.py'
   install-requirements: [
