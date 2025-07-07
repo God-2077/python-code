@@ -6,7 +6,7 @@ on:
     branches:
       - dev
     paths:
-      - 'package/config.yml'
+      - 'package/nuitka_config.yml'
 
 jobs:
   package-and-release:
