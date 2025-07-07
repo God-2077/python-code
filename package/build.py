@@ -41,7 +41,7 @@ def main():
     
     success_count = 0
     task_error_list = []
-    if len(config) == 0:
+    if not config:
         print("无任务")
         sys.exit(0)
     # 遍历所有打包任务
