@@ -42,6 +42,8 @@ jobs:
         generate_release_notes: true
         draft: false
         prerelease: false
+        fail_on_unmatched_files: true
+        
   package:
     needs: release
     strategy:
@@ -56,8 +58,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # 获取所有历史记录以便生成标签
+      # with:
+      #   fetch-depth: 0  # 获取所有历史记录以便生成标签
     
     - name: Set up Python
       uses: actions/setup-python@v5
