@@ -7,7 +7,7 @@
 爬取小说章节内容页面, 保存到本地
 最后去阅读小说了
 
-最新版：[novel_crawler_v.25.07.07][7]
+最新版：[novel_crawler_v.25.07.08][8]
 
 ## 说明
 
@@ -61,6 +61,9 @@ rules:
   # 小说简介 CSS 选择器
   novel_intro: 'div.intro'
   
+   # 小说封面图片路径(img标签)
+  novel_cover_img: 'body > div.book > div.info > div.cover > img'
+  
   # 小说章节区域 CSS 选择器
   novel_chapter_div: 'div.chapter-list'
   
@@ -110,7 +113,7 @@ network:
   # 失败重试次数
   max_retries: 5
 
-  # 多线程模式，r
+  # 多线程模式，忽略每分钟请求限制
   multi_threading: True # 多线程模式
   thread_count: 32 # 线程数量
   
@@ -124,6 +127,13 @@ python ***.py config.yml
 ```
 
 ## 日志
+
+- [novel_crawler_v.25.07.08][8]
+    - 日志输出优化
+    - 信息显示优化
+    - 界面显示优化
+    - 封面图片支持
+    - 增加下载统计
 
 - [novel_crawler_v.25.07.07][7]
     - 新增多线程下载模式
@@ -165,3 +175,4 @@ python ***.py config.yml
 [5]: novel_crawler_v.25.06.05.py
 [6]: novel_crawler_v.25.07.06.py
 [7]: novel_crawler_v.25.07.07.py
+[8]: novel_crawler_v.25.07.08.py
