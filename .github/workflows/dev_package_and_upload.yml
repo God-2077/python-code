@@ -1,10 +1,10 @@
-name: Nuitka Package and Release
+name: Nuitka Package and Upload(dev)
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - dev
     paths:
       - 'package/nuitka_config.yml'
 
@@ -27,15 +27,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
           
-    - name: Generate version tag
-      id: version
-      run: |
-        # 使用 UTC 时间确保一致性
-        $date = (Get-Date).ToUniversalTime().ToString("yy.MM.dd")
-        $tag = "v$date"
-        $release = "Release $date"
-        echo "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-        echo "release_name=$release" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
     
     
     - name: Set up Python
