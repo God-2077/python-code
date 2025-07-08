@@ -417,7 +417,7 @@ def download_chapter(chapter_info, progress, task_id, chapter_count):
 
 # 主函数开始
 def main():
-    print_header("小说爬虫工具")
+    print_header("小说爬虫工具\n版本 v.25.07.07")
     
     if debug:
         logger.debug("Debug模式已开启")
