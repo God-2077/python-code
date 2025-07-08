@@ -4,7 +4,7 @@
 
 注意，这程序严重依赖第三方的 metting api
 
-最新版：[v.24-10-06][7]
+最新版：[v.25-07-08][8]
 
 ## 说明
 
@@ -24,6 +24,9 @@ python ***.py
 
 ## 日志
 
+- [v.25-07-08][8]
+    - 删去 `#!/usr/bin/python` 指令
+    
 - [v.24-10-06][7]
     - 小优化
     - 添加了是否下载小于60秒音乐的选项
@@ -61,3 +64,4 @@ python ***.py
 [5]: https://github.com/God-2077/python-code/blob/main/%E7%BD%91%E6%98%93%E4%BA%91%E9%9F%B3%E4%B9%90%E6%AD%8C%E5%8D%95%E6%89%B9%E9%87%8F%E4%B8%8B%E8%BD%BD%E6%AD%8C%E6%9B%B2/v.24-07-18.py
 [6]: https://github.com/God-2077/python-code/blob/main/%E7%BD%91%E6%98%93%E4%BA%91%E9%9F%B3%E4%B9%90%E6%AD%8C%E5%8D%95%E6%89%B9%E9%87%8F%E4%B8%8B%E8%BD%BD%E6%AD%8C%E6%9B%B2/v.24-07-19.py
 [7]: https://github.com/God-2077/python-code/blob/main/%E7%BD%91%E6%98%93%E4%BA%91%E9%9F%B3%E4%B9%90%E6%AD%8C%E5%8D%95%E6%89%B9%E9%87%8F%E4%B8%8B%E8%BD%BD%E6%AD%8C%E6%9B%B2/v.24-10-06.py
+[8]: v.24-10-06.py
