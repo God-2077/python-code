@@ -5,11 +5,12 @@
     'beautifulsoup4',
     'requests',
     'ebooklib',
-    'rich'
+    'rich',
+    'Pillow'
   ]
   upx: true
   # onefile: 2 # 0:文件夹 1:单文件 2:两者
   icon: 
   windows-disable-console: False
   distpath: 'dist'
-  output-name: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'
+  output-name-template: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'
