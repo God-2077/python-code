@@ -61,7 +61,7 @@ def main():
             windowed = task.get('windowed', False)
             name = task.get('name')
             version = task.get('version')
-            output_name_template = task.get('output-name-template', '{{name}}_{{version}}_{{arch}}_{{os}}')
+            output_name_template = task.get('output-name-template', '{{name}}_{{version}}_pyInstaller_{{os}}_{{arch}}')
             if arrch == "AMD64":
                 arrch = "x64"
             output_name = output_name_template.replace('{{name}}', name).replace('{{version}}', version).replace('{{arch}}', arrch).replace('{{os}}', Machine)
