@@ -7,37 +7,6 @@ import argparse
 from pathlib import Path
 # from zip import zip_files_and_folders
 
-def run_command_with_input(cmd):
-    """执行命令并自动响应[Yes]/No提示"""
-    process = subprocess.Popen(
-        cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,  # 合并标准错误到标准输出
-        stdin=subprocess.PIPE,
-        text=True,                # 启用文本模式
-        encoding='utf-8',         # 设置编码
-        bufsize=1                 # 行缓冲
-    )
-    
-    # 实时读取输出并检测提示
-    output_lines = []
-    while True:
-        line = process.stdout.readline()
-        if not line:  # 无输出表示进程结束
-            break
-        
-        print(line, end='')  # 实时打印输出
-        output_lines.append(line)
-        
-        # 检测到[Yes]/No提示时自动输入yes
-        if "Yes" in line:
-            process.stdin.write("yes\n")
-            process.stdin.flush()
-    
-    # 等待进程结束并获取返回码
-    returncode = process.wait()
-    return subprocess.CompletedProcess(cmd, returncode, stdout=''.join(output_lines))
-
 def main():
     print("="*50)
     print("="*50)
@@ -93,6 +62,14 @@ def main():
                 arrch = "x64"
             output_name = output_name_template.replace('{{name}}', name).replace('{{version}}', version).replace('{{arch}}', arrch).replace('{{os}}', Machine)
 
+            # 检查操作系统和架构
+            # if Machine not in task.get('os', []):
+            #     print(f"警告: 任务 [{i}/{len(config)} {task['name']}] 不支持当前操作系统 {Machine}")
+            #     continue
+            # if arrch not in task.get('arch', []):
+            #     print(f"警告: 任务 [{i}/{len(config)} {task['name']}] 不支持当前架构 {arrch}")
+            #     continue
+            
             # 检查Python文件是否存在
             if not python_file.exists():
                 print(f"错误: Python文件不存在 {python_file}")
@@ -110,7 +87,10 @@ def main():
                 f'--output-dir={dist_path}', # 输出目录
                 '--onefile', # 单文件
                 '--standalone',
-                '--mingw64'
+                '--mingw64',
+                # '--mode',
+                '--assume-yes-for-downloads', #自动下载外部代码
+                
             ]
             
             # 添加窗口模式选项
@@ -131,14 +111,13 @@ def main():
             
             # 打印并执行命令
             print("执行命令:", ' '.join(cmd))
-            # 使用增强的命令执行函数
-            result = run_command_with_input(cmd)
+            result = subprocess.run(cmd)
             
             if result.returncode == 0:
                 print(f"(onefile)打包成功: {dist_path / output_name}")
                 success_count += 1
             else:
-                print(f"(onefile)打包失败，退出码: {result.returncode}")
+                print(f"打包失败，退出码: {result.returncode}")
         except Exception as e:
             print(f"任务[{i}/{len(config)} {task['name']}]失败: {e}")
             task_error_list.append(task['name'])
