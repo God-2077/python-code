@@ -3,3 +3,4 @@ requests
 ebooklib
 yaml
 rich
+Pillow
