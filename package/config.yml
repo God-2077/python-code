@@ -1,63 +1,104 @@
-name: Nuitka Package(dev)
+- name: 'novel_crawler'
+  version: 'v.25.07.08'
+  python-file: 'novel_crawler\novel_crawler_v.25.07.08.py'
+  install-requirements: [
+    'beautifulsoup4',
+    'requests',
+    'ebooklib',
+    'rich'
+  ]
+  upx: true
+  # onefile: 2 # 0:文件夹 1:单文件 2:两者
+  icon: 
+  windowed: False
+  distpath: 'dist'
+  output-name-template: '{{name}}_{{version}}_pyInstaller_{{os}}_{{arch}}'
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - dev
-    paths:
-      - 'package/config.yml'
+- name: 'Keyboard_monitoring'
+  version: 'v.24.07.16'
+  python-file: '键盘监听\v.24.07.16.py'
+  install-requirements: [
+    'keyboard',
+    'configparser',
+    'pywin32'
+  ]
+  upx: true
+  # onefile: 1
+  icon: 
+  windowed: False
+  distpath: 'dist'
+  output-name-template: '{{name}}_{{version}}_pyInstaller_{{os}}_{{arch}}'
 
-jobs:
-  package-and-release:
-    runs-on: windows-latest
-    
-    # 添加必要的权限
-    permissions:
-      contents: write  # 允许创建发布和上传资源
-    
-    steps:
-    - name: Set Timezone to China Standard Time
-      run: tzutil /s "China Standard Time"
-      shell: pwsh
+- name: 'NetEase_Cloud_Music_Download'
+  version: 'v.24-10-06'
+  python-file: '网易云音乐歌单批量下载歌曲\v.24-10-06.py'
+  install-requirements: [
+    'quote',
+    'requests',
+    'tabulate',
+    'mutagen'
+  ]
+  upx: true
+  # onefile: 1
+  icon: 
+  windowed: False
+  distpath: 'dist'
+  output-name-template: '{{name}}_{{version}}_pyInstaller_{{os}}_{{arch}}'
 
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-    
+- name: 'ftp_server'
+  version: 'v.25-05-02'
+  python-file: 'ftp_server\ftp_server_v.25-05-02.py'
+  install-requirements: [
+    'pyftpdlib'
+  ]
+  upx: true
+  # onefile: 1
+  icon: 
+  windowed: False
+  distpath: 'dist'
+  output-name-template: '{{name}}_{{version}}_pyInstaller_{{os}}_{{arch}}'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install nuitka  pyyaml
-    
-    - name: Set up MinGW
-      uses: egor-tensin/setup-mingw@v2
-      with:
-        platform: x64
+# - name: 'psql_terminal'
+#   version: 
+#   os: [
+#     'Windows',
+#     'Linux'
+#   ]
+#   python-file: 'psql_terminal\psql_terminal.py'
+#   install-requirements: [
+#     'psycopg2'
+#   ]
+#   upx: true
+#   icon: 
+#   windowed: False
+#   distpath: 'dist'
+#   output-name: '{{name}}_{{os}}_{{arch}}'
 
-    - name: Fix Python encoding (Windows)
-      run: |
-        # 设置Python使用UTF-8编码
-        [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
-        # 设置控制台编码为UTF-8
-        chcp.com 65001
+# - name: 'package'
+#   version:
+#   os: [
+#     'Windows',
+#     'Linux'
+#   ]
+#   python-file: 'package\build.py'
+#   install-requirements: [
+#     'pyinstaller'
+#   ]
+#   upx: true
+#   icon: 
+#   windowed: False
+#   distpath: 'dist'
+#   output-name-template: '{{name}}_{{version}}_pyInstaller_{{os}}_{{arch}}'
 
-    - name: Run packaging script
-      run: |
-        cd package
-        python nuitka_build.py nuitka_config.yml
-        
-    - name: Upload files with wildcards
-      uses: actions/upload-artifact@v4
-      with:
-        name: Artifact
-        path: |
-          ./dist/*.exe
-        retention-days: 90
-        if-no-files-found: warn
-        overwrite: true
+- name: 'sunrise_sunset_info'
+  version: 'v.25.05.02'
+  python-file: 'sunrise_sunset_info\sunrise_sunset_info_v.25.05.02.py'
+  install-requirements: [
+    'pyftpdlib'
+  ]
+  upx: true
+  # onefile: 1 # 0:文件夹 1:单文件 2:两者
+  icon: 
+  windowed: False
+  distpath: 'dist'
+  output-name-template: '{{name}}_{{version}}_pyInstaller_{{os}}_{{arch}}'
