@@ -112,7 +112,7 @@ def main():
             else:
                 if use_upx:
                     if upx_dir.exists():
-                        cmd.addpend('--plugin-enable=upx')
+                        cmd.append('--plugin-enable=upx')
                         cmd.extend(['--upx-binary', str(upx_dir)])
                         print(f"使用UPX压缩: {upx_dir}")
                     else:
