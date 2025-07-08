@@ -33,8 +33,8 @@
   output-name-template: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'
 
 - name: 'NetEase_Cloud_Music_Download'
-  version: 'v.24-10-06'
-  python-file: '网易云音乐歌单批量下载歌曲\v.24-10-06.py'
+  version: 'v.25-07-08'
+  python-file: '网易云音乐歌单批量下载歌曲\v.25-07-08.py'
   install-requirements: [
     'quote',
     'requests',
