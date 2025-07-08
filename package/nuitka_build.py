@@ -90,6 +90,7 @@ def main():
                 '--mingw64',
                 # '--mode',
                 '--assume-yes-for-downloads', #自动下载外部代码
+                '--show-memory'
                 
             ]
             
