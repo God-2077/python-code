@@ -1,19 +1,16 @@
-name: Nuitka Package and Release
+name: Nuitka Package and Upload(dev)
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - dev
     paths:
       - 'package/nuitka_config.yml'
 
 jobs:
-  package-and-release:
+  package-and-upload:
     runs-on: windows-latest
-    env:
-      PYTHON_VERSION: 3.10
-      NUITKA_CACHE_DIR: ${{ github.workspace }}/nuitka-cache
     
     # 添加必要的权限
     permissions:
@@ -26,50 +23,16 @@ jobs:
 
     - name: Checkout code
       uses: actions/checkout@v4
-          
-    - name: Generate version tag
-      id: version
-      run: |
-        # 使用 UTC 时间确保一致性
-        $date = (Get-Date).ToUniversalTime().ToString("yy.MM.dd")
-        $tag = "v$date"
-        $release = "Release $date"
-        echo "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-        echo "release_name=$release" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-    
     
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: ${{ env.PYTHON_VERSION }}
-        
-    - name: Cache UPX
-      id: cache-upx
-      uses: actions/cache@v4
-      with:
-        path: upx
-        key: ${{ runner.os }}-${{ runner.arch }}-upx-v5.0.1
-        restore-keys: |
-          ${{ runner.os }}-${{ runner.arch }}-upx-
-          
+        python-version: '3.10'
+
     - name: UPX Setup
-      if: ${{ steps.cache-upx.outputs.cache-hit != 'true' }
       run: |
         mkdir upx
         curl -o upx/upx.exe https://assets.ksable.top/github/upx/upx/v5.0.1/windows-amd64/upx.exe
-
-    - name: get pip cache dir
-      id: pip-cache-dir
-      run: echo "pip-cache-dir=$(pip cache dir)" >> $env:GITHUB_OUTPUT
-      
-    - name: pip cache
-      uses: actions/cache@v4
-      with:
-        path: ${{ steps.pip-cache-dir.outputs.dir }}  # pip缓存路径
-        key: ${{ runner.os }}-${{ runner.arch }}-pip-${{ hashFiles('package/nuitka_build.py') }}
-        restore-keys: |
-             ${{ runner.os }}-${{ runner.arch }}-pip-  # 后备恢复键（当精确键不存在时，使用最近的缓存）
-             
 
     - name: Install dependencies
       run: |
@@ -90,15 +53,6 @@ jobs:
     #     # 设置控制台编码为UTF-8
     #     chcp.com 65001
 
-    - name: Cache Nuitka cache directory
-      uses: actions/cache@v4
-      with:
-        path: ${{ env.NUITKA_CACHE_DIR }}
-        key: nuitka-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-nuitka-${{ hashFiles('package/nuitka_build.py') }}
-        restore-keys: |
-          nuitka-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-
-          nuitka-${{ runner.os }}-${{ runner.arch }}-
-          
     - name: Run packaging script
       run: |
         # 设置Python使用UTF-8编码
