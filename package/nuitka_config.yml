@@ -13,7 +13,7 @@
   icon: 
   windows-disable-console: False
   distpath: 'dist'
-  timeout: 1200
+  timeout: 2700
   output-name-template: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'
 
 - name: 'Keyboard_monitoring'
@@ -29,7 +29,7 @@
   icon: 
   windows-disable-console: False
   distpath: 'dist'
-  timeout: 1200
+  timeout: 2700
   output-name-template: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'
 
 - name: 'NetEase_Cloud_Music_Download'
@@ -46,7 +46,7 @@
   icon: 
   windows-disable-console: False
   distpath: 'dist'
-  timeout: 1200
+  timeout: 2700
   output-name-template: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'
 
 - name: 'ftp_server'
@@ -60,7 +60,7 @@
   icon: 
   windows-disable-console: False
   distpath: 'dist'
-  timeout: 1200
+  timeout: 2700
   output-name-template: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'
 
 - name: 'sunrise_sunset_info'
@@ -74,5 +74,5 @@
   icon: 
   windows-disable-console: False
   distpath: 'dist'
-  timeout: 1200
+  timeout: 2700
   output-name-template: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'

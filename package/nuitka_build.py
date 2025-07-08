@@ -6,6 +6,8 @@ import platform
 import argparse
 from pathlib import Path
 # from zip import zip_files_and_folders
+import uuid
+import shutil
 
 def main():
     print("="*50)
@@ -92,7 +94,7 @@ def main():
                 '--mingw64',
                 # '--mode',
                 '--assume-yes-for-downloads', #自动下载外部代码
-                '--show-memory'
+                # '--show-memory'
                 
             ]
             
@@ -120,8 +122,12 @@ def main():
             #             print(f"警告: UPX目录不存在 {upx_dir}")
             #     else:
             #         print("不使用UPX压缩")
+            
             # 添加主Python文件
-            cmd.append(str(python_file))
+            t_file = str(uuid.uuid4()) + ".py"
+            shutil.copy(str(python_file), t_file)
+            t_file_path = base_dir / t_file
+            cmd.append(str(t_file_path))
             
             # 打印并执行命令
             print("执行命令:", ' '.join(cmd))
@@ -137,7 +143,7 @@ def main():
                 result = subprocess.run(cmd)
             
             if result.returncode == 0:
-                print(f"(onefile)打包成功: {dist_path / output_name}")
+                print(f"打包成功: {dist_path / output_name}")
                 success_count += 1
             else:
                 print(f"打包失败，退出码: {result.returncode}")
