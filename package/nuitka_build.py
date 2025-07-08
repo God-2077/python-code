@@ -125,8 +125,8 @@ def main():
             
             # 添加主Python文件
             t_file = str(uuid.uuid4()) + ".py"
-            shutil.copy(str(python_file), t_file)
             t_file_path = base_dir / t_file
+            shutil.copy(str(python_file), t_file_path)
             cmd.append(str(t_file_path))
             
             # 打印并执行命令
