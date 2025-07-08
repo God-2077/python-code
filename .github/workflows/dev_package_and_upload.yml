@@ -56,7 +56,7 @@ jobs:
     - name: pip cache
       uses: actions/cache@v4
       with:
-        path: ${{ steps.pip-cache-dir.outputs.dir }}  # pip缓存路径
+        path: ${{ steps.pip-cache-dir.outputs.pip-cache-dir }}  # pip缓存路径
         key: ${{ runner.os }}-${{ runner.arch }}-pip-${{ hashFiles('package/nuitka_build.py') }}
         restore-keys: |
              ${{ runner.os }}-${{ runner.arch }}-pip-  # 后备恢复键（当精确键不存在时，使用最近的缓存）
