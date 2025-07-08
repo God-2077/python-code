@@ -1,4 +1,4 @@
-name: Nuitka Package and Release
+name: Nuitka Package and Upload(dev)
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
       - 'package/nuitka_config.yml'
 
 jobs:
-  package-and-release:
+  package-and-upload:
     runs-on: windows-latest
     
     # 添加必要的权限
