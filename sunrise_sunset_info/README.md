@@ -11,7 +11,7 @@
 安装第三方库
 
 ```bash
-pip install pyftpdlib 
+pip install pyftpdlib astropy
 ```
 
 运行
