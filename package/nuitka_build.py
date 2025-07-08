@@ -107,18 +107,18 @@ def main():
                 else:
                     print(f"警告: 图标文件不存在 {icon_path}")
                     
-            if arrch == "ARM64":
-                print("UPX不支持当前架构")
-            else:
-                if use_upx:
-                    if upx_dir.exists():
-                        cmd.append('--plugin-enable=upx')
-                        cmd.extend(['--upx-binary', str(upx_dir)])
-                        print(f"使用UPX压缩: {upx_dir}")
-                    else:
-                        print(f"警告: UPX目录不存在 {upx_dir}")
-                else:
-                    print("不使用UPX压缩")
+            # if arrch == "ARM64":
+            #     print("UPX不支持当前架构")
+            # else:
+            #     if use_upx:
+            #         if upx_dir.exists():
+            #             cmd.append('--plugin-enable=upx')
+            #             cmd.extend(['--upx-binary', str(upx_dir)])
+            #             print(f"使用UPX压缩: {upx_dir}")
+            #         else:
+            #             print(f"警告: UPX目录不存在 {upx_dir}")
+            #     else:
+            #         print("不使用UPX压缩")
             # 添加主Python文件
             cmd.append(str(python_file))
             
