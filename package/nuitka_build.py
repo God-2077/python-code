@@ -27,7 +27,7 @@ def main():
     print(f"Python版本: {sys.version}")
     
     # 解析命令行参数
-    parser = argparse.ArgumentParser(description='PyInstaller打包脚本')
+    parser = argparse.ArgumentParser(description='Nuitka打包脚本')
     parser.add_argument('config', help='配置文件路径')
     args = parser.parse_args()
 
@@ -57,7 +57,7 @@ def main():
             windows_disable_console = task.get('windows-disable-console', False)
             name = task.get('name')
             version = task.get('version')
-            output_name_template = task.get('output-name-template', '{{name}}_{{version}}_{{arch}}_{{os}}')
+            output_name_template = task.get('output-name-template', '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}')
             if arrch == "AMD64":
                 arrch = "x64"
             output_name = output_name_template.replace('{{name}}', name).replace('{{version}}', version).replace('{{arch}}', arrch).replace('{{os}}', Machine)
