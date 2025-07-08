@@ -27,7 +27,7 @@ def main():
     print(f"Python版本: {sys.version}")
     
     # 解析命令行参数
-    parser = argparse.ArgumentParser(description='PyInstaller打包脚本')
+    parser = argparse.ArgumentParser(description='Nuitka打包脚本')
     parser.add_argument('config', help='配置文件路径')
     args = parser.parse_args()
 
@@ -37,6 +37,7 @@ def main():
     
     # 基础路径设置
     base_dir = Path(__file__).parent.parent  # 项目根目录
+    upx_dir = base_dir / './upx/'  # UPX目录
     
     success_count = 0
     task_error_list = []
@@ -57,7 +58,7 @@ def main():
             windows_disable_console = task.get('windows-disable-console', False)
             name = task.get('name')
             version = task.get('version')
-            output_name_template = task.get('output-name-template', '{{name}}_{{version}}_{{arch}}_{{os}}')
+            output_name_template = task.get('output-name-template', '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}')
             if arrch == "AMD64":
                 arrch = "x64"
             output_name = output_name_template.replace('{{name}}', name).replace('{{version}}', version).replace('{{arch}}', arrch).replace('{{os}}', Machine)
@@ -87,7 +88,11 @@ def main():
                 f'--output-dir={dist_path}', # 输出目录
                 '--onefile', # 单文件
                 '--standalone',
-                '--mingw64'
+                '--mingw64',
+                # '--mode',
+                '--assume-yes-for-downloads', #自动下载外部代码
+                '--show-memory'
+                
             ]
             
             # 添加窗口模式选项
@@ -101,8 +106,19 @@ def main():
                     cmd.extend(['--windows-icon-from-ico=icon.ico', str(icon_path)])
                 else:
                     print(f"警告: 图标文件不存在 {icon_path}")
-            
-
+                    
+            # if arrch == "ARM64":
+            #     print("UPX不支持当前架构")
+            # else:
+            #     if use_upx:
+            #         if upx_dir.exists():
+            #             cmd.append('--plugin-enable=upx')
+            #             cmd.extend(['--upx-binary', str(upx_dir)])
+            #             print(f"使用UPX压缩: {upx_dir}")
+            #         else:
+            #             print(f"警告: UPX目录不存在 {upx_dir}")
+            #     else:
+            #         print("不使用UPX压缩")
             # 添加主Python文件
             cmd.append(str(python_file))
             
@@ -114,7 +130,7 @@ def main():
                 print(f"(onefile)打包成功: {dist_path / output_name}")
                 success_count += 1
             else:
-                print(f"(onefile)打包失败，退出码: {result.returncode}")
+                print(f"打包失败，退出码: {result.returncode}")
         except Exception as e:
             print(f"任务[{i}/{len(config)} {task['name']}]失败: {e}")
             task_error_list.append(task['name'])
@@ -126,7 +142,7 @@ def main():
     else:
         print("打包失败，没有成功打包任何任务")
         print(f"失败的任务: {', '.join(task_error_list)}")
-        sys.exit(0)
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()

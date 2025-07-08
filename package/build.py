@@ -41,6 +41,9 @@ def main():
     
     success_count = 0
     task_error_list = []
+    if not config:
+        print("无任务")
+        sys.exit(0)
     # 遍历所有打包任务
     for i, task in enumerate(config, start=1):
         try:
@@ -58,7 +61,7 @@ def main():
             windowed = task.get('windowed', False)
             name = task.get('name')
             version = task.get('version')
-            output_name_template = task.get('output-name-template', '{{name}}_{{version}}_{{arch}}_{{os}}')
+            output_name_template = task.get('output-name-template', '{{name}}_{{version}}_pyInstaller_{{os}}_{{arch}}')
             if arrch == "AMD64":
                 arrch = "x64"
             output_name = output_name_template.replace('{{name}}', name).replace('{{version}}', version).replace('{{arch}}', arrch).replace('{{os}}', Machine)
