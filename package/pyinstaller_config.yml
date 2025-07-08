@@ -8,13 +8,13 @@
     'rich',
     'Pillow'
   ]
-  # upx: true
+  upx: true
   # onefile: 2 # 0:文件夹 1:单文件 2:两者
   icon: 
-  windows-disable-console: False
+  windowed: False
   distpath: 'dist'
   timeout: 1200
-  output-name-template: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'
+  output-name-template: '{{name}}_{{version}}_pyInstaller_{{os}}_{{arch}}'
 
 - name: 'Keyboard_monitoring'
   version: 'v.24.07.16'
@@ -24,13 +24,13 @@
     'configparser',
     'pywin32'
   ]
-  # upx: true
+  upx: true
   # onefile: 1
   icon: 
-  windows-disable-console: False
+  windowed: False
   distpath: 'dist'
   timeout: 1200
-  output-name-template: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'
+  output-name-template: '{{name}}_{{version}}_pyInstaller_{{os}}_{{arch}}'
 
 - name: 'NetEase_Cloud_Music_Download'
   version: 'v.24-10-06'
@@ -41,13 +41,13 @@
     'tabulate',
     'mutagen'
   ]
-  # upx: true
+  upx: true
   # onefile: 1
   icon: 
-  windows-disable-console: False
+  windowed: False
   distpath: 'dist'
   timeout: 1200
-  output-name-template: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'
+  output-name-template: '{{name}}_{{version}}_pyInstaller_{{os}}_{{arch}}'
 
 - name: 'ftp_server'
   version: 'v.25-05-02'
@@ -55,13 +55,45 @@
   install-requirements: [
     'pyftpdlib'
   ]
-  # upx: true
+  upx: true
   # onefile: 1
   icon: 
-  windows-disable-console: False
+  windowed: False
   distpath: 'dist'
   timeout: 1200
-  output-name-template: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'
+  output-name-template: '{{name}}_{{version}}_pyInstaller_{{os}}_{{arch}}'
+
+# - name: 'psql_terminal'
+#   version: 
+#   os: [
+#     'Windows',
+#     'Linux'
+#   ]
+#   python-file: 'psql_terminal\psql_terminal.py'
+#   install-requirements: [
+#     'psycopg2'
+#   ]
+#   upx: true
+#   icon: 
+#   windowed: False
+#   distpath: 'dist'
+#   output-name: '{{name}}_{{os}}_{{arch}}'
+
+# - name: 'package'
+#   version:
+#   os: [
+#     'Windows',
+#     'Linux'
+#   ]
+#   python-file: 'package\build.py'
+#   install-requirements: [
+#     'pyinstaller'
+#   ]
+#   upx: true
+#   icon: 
+#   windowed: False
+#   distpath: 'dist'
+#   output-name-template: '{{name}}_{{version}}_pyInstaller_{{os}}_{{arch}}'
 
 - name: 'sunrise_sunset_info'
   version: 'v.25.05.02'
@@ -69,10 +101,10 @@
   install-requirements: [
     'pyftpdlib'
   ]
-  # upx: true
+  upx: true
   # onefile: 1 # 0:文件夹 1:单文件 2:两者
   icon: 
-  windows-disable-console: False
+  windowed: False
   distpath: 'dist'
   timeout: 1200
-  output-name-template: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'
+  output-name-template: '{{name}}_{{version}}_pyInstaller_{{os}}_{{arch}}'

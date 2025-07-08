@@ -61,6 +61,7 @@ def main():
             windowed = task.get('windowed', False)
             name = task.get('name')
             version = task.get('version')
+            timeout = task.get('timeout', 60 * 45)
             output_name_template = task.get('output-name-template', '{{name}}_{{version}}_pyInstaller_{{os}}_{{arch}}')
             if arrch == "AMD64":
                 arrch = "x64"
@@ -135,7 +136,16 @@ def main():
             
             # 打印并执行命令
             print("执行命令:", ' '.join(cmd))
-            result = subprocess.run(cmd)
+            if timeout:
+                try:
+                    result = subprocess.run(cmd,timeout=timeout)
+                except subprocess.TimeoutExpired:
+                    print(f"任务[{i}/{len(config)} {task['name']}] 执行超时 {timeout} 秒")
+                    print(f"任务[{i}/{len(config)} {task['name']}]失败: {e}")
+                    task_error_list.append(task['name'])
+                    continue
+            else:
+                result = subprocess.run(cmd)
 
             # if onefile == 2:
             #     cmd.append(str(python_file))

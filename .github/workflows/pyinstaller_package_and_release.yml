@@ -1,12 +1,12 @@
-name: Auto Package and Release
+name: Pyinstaller Package and Release
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - 'package/config.yml'
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'package/config.yml'
 
 jobs:
   package-and-release:
@@ -59,7 +59,7 @@ jobs:
     - name: Run packaging script
       run: |
         cd package
-        python build.py config.yml
+        python pyinstaller_build.py pyinstaller_config.yml
         
     - name: Create Release
       id: create_release
