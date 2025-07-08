@@ -110,6 +110,7 @@ def main():
                 else:
                     print(f"警告: 图标文件不存在 {icon_path}")
                     
+
             if arrch == "ARM64":
                 print("UPX不支持当前架构")
             else:
