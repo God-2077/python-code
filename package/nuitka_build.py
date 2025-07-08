@@ -26,14 +26,13 @@ def main():
 
     print(f"当前操作系统: {Machine} {arrch}")
     print(f"平台详情: {platform.platform()}")
-    print("CPU核心数:", os.cpu_count())
     print(f"Python版本: {sys.version}")
     
     # 解析命令行参数
     parser = argparse.ArgumentParser(description='Nuitka打包脚本')
     parser.add_argument('config', help='配置文件路径')
     args = parser.parse_args()
-    cpu_count=os.cpu_count()
+
     # 读取配置文件
     with open(args.config, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
@@ -93,7 +92,6 @@ def main():
                 '--onefile', # 单文件
                 '--standalone',
                 '--mingw64',
-                f'--jobs={os.cpu_count()}', # 多线程
                 # '--mode',
                 '--assume-yes-for-downloads', #自动下载外部代码
                 # '--show-memory'
