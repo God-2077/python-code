@@ -8,9 +8,9 @@
     'rich',
     'Pillow'
   ]
-  # upx: true
+  upx: true
   # onefile: 2 # 0:文件夹 1:单文件 2:两者
-  icon: 
+  icon: package\assets\favicon.ico 
   windows-disable-console: False
   distpath: 'dist'
   timeout: 2700
@@ -22,11 +22,12 @@
   install-requirements: [
     'keyboard',
     'configparser',
-    'pywin32'
+    'pywin32',
+    'psutil'
   ]
-  # upx: true
+  upx: true
   # onefile: 1
-  icon: 
+  icon: package\assets\favicon.ico 
   windows-disable-console: False
   distpath: 'dist'
   timeout: 2700
@@ -41,9 +42,9 @@
     'tabulate',
     'mutagen'
   ]
-  # upx: true
+  upx: true
   # onefile: 1
-  icon: 
+  icon: package\assets\favicon.ico 
   windows-disable-console: False
   distpath: 'dist'
   timeout: 2700
@@ -55,9 +56,9 @@
   install-requirements: [
     'pyftpdlib'
   ]
-  # upx: true
+  upx: true
   # onefile: 1
-  icon: 
+  icon: package\assets\favicon.ico 
   windows-disable-console: False
   distpath: 'dist'
   timeout: 2700
@@ -67,11 +68,12 @@
   version: 'v.25.05.02'
   python-file: 'sunrise_sunset_info\sunrise_sunset_info_v.25.05.02.py'
   install-requirements: [
-    'pyftpdlib'
+    'pyftpdlib',
+    'astropy'
   ]
-  # upx: true
+  upx: true
   # onefile: 1 # 0:文件夹 1:单文件 2:两者
-  icon: 
+  icon: package\assets\favicon.ico
   windows-disable-console: False
   distpath: 'dist'
   timeout: 2700
