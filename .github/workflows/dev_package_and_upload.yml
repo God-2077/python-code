@@ -44,7 +44,7 @@ jobs:
           ${{ runner.os }}-${{ runner.arch }}-upx-
           
     - name: UPX Setup
-      if: ${{ steps.cache-upx.outputs.cache-hit != 'true' }
+      if: ${{ steps.cache-upx.outputs.cache-hit != 'true' }}
       run: |
         mkdir upx
         curl -o upx/upx.exe https://assets.ksable.top/github/upx/upx/v5.0.1/windows-amd64/upx.exe
