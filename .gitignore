@@ -199,3 +199,4 @@ cython_debug/
 temp/
 .vscode/
 .idea/
+**/*.bak
