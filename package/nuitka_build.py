@@ -33,14 +33,18 @@ def main():
     parser = argparse.ArgumentParser(description='Nuitka打包脚本')
     parser.add_argument('config', help='配置文件路径')
     args = parser.parse_args()
-    cpu_count=os.cpu_count()
-    # 读取配置文件
-    with open(args.config, 'r', encoding='utf-8') as f:
-        config = yaml.safe_load(f)
     
     # 基础路径设置
     base_dir = Path(__file__).parent.parent  # 项目根目录
     upx_dir = base_dir / './upx/'  # UPX目录
+
+    # 读取配置文件
+    config_path = base_dir / args.config
+    if not config_path.exists():
+        print(f"错误: 配置文件不存在 {config_path}")
+        sys.exit(1)
+    with open(str(config_path), 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
     
     success_count = 0
     task_error_list = []
@@ -55,7 +59,6 @@ def main():
             python_file = base_dir / task['python-file']
             dist_path = base_dir / task['distpath']
             requirements = task.get('install-requirements', [])
-            use_upx = task.get('upx', False)
             enable_plugins = task.get('enable-plugins', [])
             
             # onefile = task.get('onefile', 0)
@@ -164,6 +167,7 @@ def main():
                 except subprocess.TimeoutExpired:
                     print(f"任务[{i}/{len(config)} {task['name']}] 执行超时 {timeout} 秒")
                     print(f"任务[{i}/{len(config)} {task['name']}]失败: {e}")
+                    os.remove(t_file_path)
                     task_error_list.append(task['name'])
                     continue
             else:
@@ -171,9 +175,11 @@ def main():
             
             if result.returncode == 0:
                 print(f"打包成功: {dist_path / output_name}")
+                os.remove(t_file_path)
                 success_count += 1
             else:
                 print(f"打包失败，退出码: {result.returncode}")
+                os.remove(t_file_path)
         except Exception as e:
             print(f"任务[{i}/{len(config)} {task['name']}]失败: {e}")
             task_error_list.append(task['name'])
