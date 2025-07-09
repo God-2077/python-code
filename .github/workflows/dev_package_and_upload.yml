@@ -70,18 +70,8 @@ jobs:
     - name: Install UPX on Linux
       if: ${{ runner.os == 'Linux' && steps.cache-upx.outputs.cache-hit != 'true' }}
       run: |
-        case "${{ runner.arch }}" in
-          amd64)
-            UPX_ARCH=x86_64
-            ;;
-          arm64)
-            UPX_ARCH=aarch64
-            ;;
-        esac
         
-        UPX_VERSION=${{ env.UPXVERSION }}
-        UPX_URL="https://github.com/upx/upx/releases/download/v${UPX_VERSION}/upx-${UPX_VERSION}-linux-${UPX_ARCH}.tar.xz"
-        
+        UPX_URL="https://github.com/upx/upx/releases/download/v${{ env.UPXVERSION }}/upx-${{ env.UPXVERSION }}-${{ runner.arch == 'X64' && 'amd64' || 'arm64'  }}_linux.tar.xz"
         curl -L "$UPX_URL" -o upx.tar.xz
         tar -xf upx.tar.xz -C ./upx --strip-components=1
         chmod +x ./upx/upx
@@ -107,19 +97,25 @@ jobs:
       run: |
         ./upx/upx --version
       shell: bash  
-
-    - name: get pip cache dir
-      id: pip-cache-dir
-      run: echo "pip-cache-dir=$(pip cache dir)" >> $env:GITHUB_OUTPUT
       
+    - name: get pip cache dir on Windows
+      if: ${{ runner.os == 'Windows' }}
+      id: pip-cache-dir-window
+      run: echo "pip-cache-dir=$(pip cache dir)" >> $env:GITHUB_OUTPUT
+    
+    - name: get pip cache dir on Linux
+      if: ${{ runner.os == 'Linux' }}
+      id: pip-cache-dir-linux
+      run: echo "pip-cache-dir=$(pip cache dir)" >> $GITHUB_OUTPUT
+    
     - name: pip cache
       uses: actions/cache@v4
       with:
-        path: ${{ steps.pip-cache-dir.outputs.pip-cache-dir }}  # pip缓存路径
-        key: ${{ runner.os }}-${{ runner.arch }}-pip-${{ hashFiles('package/nuitka_build.py') }}
+        path: ${{ runner.os == 'Windows' && steps.pip-cache-dir-window.outputs.pip-cache-dir || steps.pip-cache-dir-linux.outputs.pip-cache-dir }}
+        key: ${{ runner.os }}-${{ runner.arch }}-pip-${{ github.event.inputs.test && hashFiles(github.event.inputs.config_path) || hashFiles('package/nuitka_build.py') }}
         restore-keys: |
-             ${{ runner.os }}-${{ runner.arch }}-pip-  # 后备恢复键（当精确键不存在时，使用最近的缓存）
-             
+          ${{ runner.os }}-${{ runner.arch }}-pip-
+    
 
     - name: Install dependencies
       run: |
@@ -144,7 +140,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{ env.NUITKA_CACHE_DIR }}
-        key: nuitka-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-nuitka-${{ hashFiles('package/nuitka_build.py') }}
+        key: nuitka-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-nuitka-${{ github.event.inputs.test && hashFiles(github.event.inputs.config_path) || hashFiles('package/nuitka_build.py') }}
         restore-keys: |
           nuitka-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-
           nuitka-${{ runner.os }}-${{ runner.arch }}-
