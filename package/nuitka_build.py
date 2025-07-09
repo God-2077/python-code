@@ -27,9 +27,11 @@ def main():
     system_os = platform.system()
     arch = platform.machine()
 
-    print(f"当前操作系统: {system_os} {arch}")
+    print(f"当前操作系统: {system_os}")
+    print(f'架构: {arch}')
     print(f"平台详情: {platform.platform()}")
     print("CPU核心数:", os.cpu_count())
+    print("处理器信息:", platform.processor())
     print(f"Python版本: {sys.version}")
     
     # 解析命令行参数
@@ -190,6 +192,20 @@ def main():
     # 输出最终结果
     print("\n" + "="*50)
     print(f"打包完成: 成功 {success_count} 个, 失败 {len(task_error_list)} 个")
+
+    if success_count != 0:
+        files_list = []
+
+        # 遍历目录下的所有条目
+        for entry in os.listdir(str(base_dir / 'dist')):
+            # 拼接完整的文件路径
+            full_path = os.path.join(str(base_dir / 'dist'), entry)
+            # 检查该路径是否为文件
+            if os.path.isfile(full_path):
+                files_list.append(entry)
+
+        # 输出文件列表
+        print(f'Dist: {str(files_list)}')
     
     if task_error_list:
         print(f"失败的任务: {', '.join(task_error_list)}")
