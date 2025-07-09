@@ -63,6 +63,7 @@ def main():
     print("CPU核心数:", os.cpu_count())
     print("处理器信息:", platform.processor())
     print(f"Python版本: {sys.version}")
+    print(f'工作目录: {os.getcwd()}')
     
     # 解析命令行参数
     parser = argparse.ArgumentParser(description='Nuitka打包脚本')
@@ -74,7 +75,8 @@ def main():
     upx_dir = base_dir / 'upx'  # UPX目录
     dist_path = base_dir / 'dist'
     # 读取配置文件
-    config_path = base_dir / args.config
+    # config_path = base_dir / args.config
+    config_path = args.config
     if not config_path.exists():
         print(f"错误: 配置文件不存在 {config_path}")
         sys.exit(1)

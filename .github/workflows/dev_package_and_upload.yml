@@ -135,6 +135,12 @@ jobs:
     #     [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
     #     # 设置控制台编码为UTF-8
     #     chcp.com 65001
+    
+    - name: Install ccache on Linux
+      if: ${{ runner.os == 'Linux' }}
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y ccache
 
     - name: Cache Nuitka cache directory
       uses: actions/cache@v4
@@ -152,8 +158,7 @@ jobs:
         [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
         # 设置控制台编码为UTF-8
         chcp.com 65001
-        cd package
-        python nuitka_build.py nuitka_config.yml
+        python ./package/nuitka_build.py ./package/nuitka_config.yml
 
     - name: Run Test packaging script on Windows
       if: ${{ github.event.inputs.test && runner.os == 'Windows' }}
@@ -162,20 +167,17 @@ jobs:
         [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
         # 设置控制台编码为UTF-8
         chcp.com 65001
-        cd package
-        python nuitka_build.py ${{ github.event.inputs.config_path }}
+        python ./package/nuitka_build.py ${{ github.event.inputs.config_path }}
         
-    - name: Run packaging script on Windows
+    - name: Run packaging script on Linux
       if: ${{ !github.event.inputs.test && runner.os == 'Linux' }}
       run: |
-        cd package
-        python nuitka_build.py nuitka_config.yml
+        python ./package/nuitka_build.py ./package/nuitka_config.yml
 
-    - name: Run Test packaging script on Windows
+    - name: Run Test packaging script on Linux
       if: ${{ github.event.inputs.test && runner.os == 'Linux' }}
       run: |
-        cd package
-        python nuitka_build.py ${{ github.event.inputs.config_path }}
+        python ./package/nuitka_build.py ${{ github.event.inputs.config_path }}
         
     - name: Upload files with wildcards
       uses: actions/upload-artifact@v4
