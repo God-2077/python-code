@@ -88,6 +88,8 @@ def main():
                 .replace('{{exe_suffix}}', exe_suffix)
             
             custom_command = task.get('custom-command')
+            only_linux_command = task.get('only-linux-command')
+            only_windows_command = task.get('only-windows-command')
             
             # 检查Python文件是否存在
             if not python_file.exists():
@@ -125,6 +127,18 @@ def main():
                         cmd.append(f'--windows-icon-from-ico={icon_path}')
                     else:
                         print(f"警告: 图标文件不存在 {icon_path}")
+                if only_windows_command:
+                    if isinstance(only_windows_command, str):
+                        cmd.extend(only_windows_command.split())
+                    elif isinstance(only_windows_command, list):
+                        cmd.extend(only_windows_command)
+            elif system_os == 'Linux':
+                if only_linux_command:
+                    if isinstance(only_linux_command, str):
+                        cmd.extend(only_linux_command.split())
+                    elif isinstance(only_linux_command, list):
+                        cmd.extend(only_linux_command)
+                cmd.append('--clang')
             else:
                 # Linux/macOS 使用 clang
                 cmd.append('--clang')

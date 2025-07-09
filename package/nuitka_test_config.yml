@@ -14,3 +14,7 @@
   timeout: 2700
   output-name-template: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'
   custom-command: []
+  only-linux-command: [
+    '--static-libpython=yes' # 使用静态链接，减少对系统库的依赖
+  ]
+  only-windows-command: []
