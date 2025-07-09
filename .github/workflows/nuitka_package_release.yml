@@ -1,4 +1,4 @@
-name: Nuitka Package and Upload(dev)
+name: Nuitka Package and Release
 
 on:
   workflow_dispatch:

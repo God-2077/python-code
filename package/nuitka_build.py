@@ -76,7 +76,7 @@ def main():
     dist_path = base_dir / 'dist'
     # 读取配置文件
     # config_path = base_dir / args.config
-    config_path = args.config
+    config_path = Path(args.config)
     if not config_path.exists():
         print(f"错误: 配置文件不存在 {config_path}")
         sys.exit(1)
