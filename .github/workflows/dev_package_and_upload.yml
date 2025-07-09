@@ -24,7 +24,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest,	ubuntu-24.04-arm, windows-latest,	windows-11-arm]
+        os: [ubuntu-latest,ubuntu-24.04-arm,windows-latest] # windows-11-arm没有对应的 Python
     env:
       PYTHON_VERSION: '3.10'
       NUITKA_CACHE_DIR: ${{ github.workspace }}/nuitka-cache
