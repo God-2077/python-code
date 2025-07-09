@@ -2,120 +2,37 @@ name: Nuitka Package and Upload(dev)
 
 on:
   workflow_dispatch:
-    inputs:
-      test:
-        description: '测试'
-        required: true
-        type: boolean
-        default: true
-      config_path:
-        description: '测试模式时用的配置文件路径(非测试时请忽略)'
-        required: true
-        type: string
-        default: 'package/nuitka_test_config.yml'
-  # push:
-  #   branches:
-  #     - dev
-  #   paths:
-  #     - 'package/nuitka_config.yml'
+  push:
+    branches:
+      - dev
+    paths:
+      - 'package/nuitka_config.yml'
 
 jobs:
   package-and-upload:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest,ubuntu-24.04-arm,windows-latest] # windows-11-arm没有对应的 Python
-    env:
-      PYTHON_VERSION: '3.10'
-      NUITKA_CACHE_DIR: ${{ github.workspace }}/nuitka-cache
-      UPXVERSION: '5.0.1'
+    runs-on: windows-latest
     
     # 添加必要的权限
     permissions:
       contents: write  # 允许创建发布和上传资源
     
     steps:
-
-    - name: Checkout code
-      uses: actions/checkout@v4
-          
-    - name: Set Timezone to China Standard Time on Windows
-      if: ${{ runner.os == 'Windows' }}
+    - name: Set Timezone to China Standard Time
       run: tzutil /s "China Standard Time"
       shell: pwsh
 
-    - name: Set Timezone to China Standard Time on Linux
-      if: ${{ runner.os == 'Linux' }}
-      run: sudo timedatectl set-timezone Asia/Shanghai
-    
+    - name: Checkout code
+      uses: actions/checkout@v4
     
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: ${{ env.PYTHON_VERSION }}
+        python-version: '3.10'
 
-    - name: Cache UPX
-      id: cache-upx
-      uses: actions/cache@v4
-      with:
-        path: upx
-        key: ${{ runner.os }}-${{ runner.arch }}-upx-v${{ env.UPXVERSION }}
-        restore-keys: |
-          ${{ runner.os }}-${{ runner.arch }}-upx-
-
-    - name: Create UPX directory
-      if: ${{ steps.cache-upx.outputs.cache-hit != 'true' }}
-      run: mkdir -p ./upx
-
-    - name: Install UPX on Linux
-      if: ${{ runner.os == 'Linux' && steps.cache-upx.outputs.cache-hit != 'true' }}
+    - name: UPX Setup
       run: |
-        
-        UPX_URL="https://github.com/upx/upx/releases/download/v${{ env.UPXVERSION }}/upx-${{ env.UPXVERSION }}-${{ runner.arch == 'X64' && 'amd64' || 'arm64'  }}_linux.tar.xz"
-        curl -L "$UPX_URL" -o upx.tar.xz
-        tar -xf upx.tar.xz -C ./upx --strip-components=1
-        chmod +x ./upx/upx
-        
-      shell: bash
-
-    - name: Install UPX on Windows
-      if: ${{  runner.os == 'Windows' && steps.cache-upx.outputs.cache-hit != 'true' }}
-      run: |
-        $arch = if (("${{ runner.arch }}" -eq "amd64") -or ("${{ runner.arch }}" -eq "X64")) { "win64" } else { "win32" }
-        $upxVersion = "${{ env.UPXVERSION }}"
-        $upxUrl = "https://github.com/upx/upx/releases/download/v$upxVersion/upx-$upxVersion-$arch.zip"
-        
-        Invoke-WebRequest -Uri $upxUrl -OutFile upx.zip
-        Expand-Archive -Path upx.zip -DestinationPath ./upx -Force
-        
-        # Windows 版本的 UPX 解压后在子目录中，需要移动到根目录
-        Move-Item -Path "./upx/upx-$upxVersion-$arch/*" -Destination ./upx -Force
-        
-      shell: pwsh
-
-    - name: Verify UPX installation
-      run: |
-        ./upx/upx --version
-      shell: bash  
-      
-    - name: get pip cache dir on Windows
-      if: ${{ runner.os == 'Windows' }}
-      id: pip-cache-dir-window
-      run: echo "pip-cache-dir=$(pip cache dir)" >> $env:GITHUB_OUTPUT
-    
-    - name: get pip cache dir on Linux
-      if: ${{ runner.os == 'Linux' }}
-      id: pip-cache-dir-linux
-      run: echo "pip-cache-dir=$(pip cache dir)" >> $GITHUB_OUTPUT
-    
-    - name: pip cache
-      uses: actions/cache@v4
-      with:
-        path: ${{ runner.os == 'Windows' && steps.pip-cache-dir-window.outputs.pip-cache-dir || steps.pip-cache-dir-linux.outputs.pip-cache-dir }}
-        key: ${{ runner.os }}-${{ runner.arch }}-pip-${{ github.event.inputs.test && hashFiles(github.event.inputs.config_path) || hashFiles('package/nuitka_build.py') }}
-        restore-keys: |
-          ${{ runner.os }}-${{ runner.arch }}-pip-
-    
+        mkdir upx
+        curl -o upx/upx.exe https://assets.ksable.top/github/upx/upx/v5.0.1/windows-amd64/upx.exe
 
     - name: Install dependencies
       run: |
@@ -135,56 +52,22 @@ jobs:
     #     [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
     #     # 设置控制台编码为UTF-8
     #     chcp.com 65001
-    
-    - name: Install ccache on Linux
-      if: ${{ runner.os == 'Linux' }}
-      run: |
-        sudo apt-get update -y
-        sudo apt-get install -y ccache
 
-    - name: Cache Nuitka cache directory
-      uses: actions/cache@v4
-      with:
-        path: ${{ env.NUITKA_CACHE_DIR }}
-        key: nuitka-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-nuitka-${{ github.event.inputs.test && hashFiles(github.event.inputs.config_path) || hashFiles('package/nuitka_build.py') }}
-        restore-keys: |
-          nuitka-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-
-          nuitka-${{ runner.os }}-${{ runner.arch }}-
-          
-    - name: Run packaging script on Windows
-      if: ${{ !github.event.inputs.test && runner.os == 'Windows' }}
+    - name: Run packaging script
       run: |
         # 设置Python使用UTF-8编码
         [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
         # 设置控制台编码为UTF-8
         chcp.com 65001
-        python ./package/nuitka_build.py ./package/nuitka_config.yml
-
-    - name: Run Test packaging script on Windows
-      if: ${{ github.event.inputs.test && runner.os == 'Windows' }}
-      run: |
-        # 设置Python使用UTF-8编码
-        [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
-        # 设置控制台编码为UTF-8
-        chcp.com 65001
-        python ./package/nuitka_build.py ${{ github.event.inputs.config_path }}
-        
-    - name: Run packaging script on Linux
-      if: ${{ !github.event.inputs.test && runner.os == 'Linux' }}
-      run: |
-        python ./package/nuitka_build.py ./package/nuitka_config.yml
-
-    - name: Run Test packaging script on Linux
-      if: ${{ github.event.inputs.test && runner.os == 'Linux' }}
-      run: |
-        python ./package/nuitka_build.py ${{ github.event.inputs.config_path }}
+        cd package
+        python nuitka_build.py nuitka_config.yml
         
     - name: Upload files with wildcards
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ runner.os }}-${{ runner.arch }}-${{ github.event.inputs.test && 'test-' || '' }}artifact
+        name: Artifact
         path: |
-          ./dist/*
+          ./dist/*.exe
         retention-days: 14
         if-no-files-found: warn
         overwrite: true
