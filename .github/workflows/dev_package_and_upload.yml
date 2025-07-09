@@ -54,7 +54,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: upx
-        key: ${{ runner.os }}-${{ runner.arch }}-upx-v${{ UPXVERSION }}
+        key: ${{ runner.os }}-${{ runner.arch }}-upx-v${{ env.UPXVERSION }}
         restore-keys: |
           ${{ runner.os }}-${{ runner.arch }}-upx-
 
@@ -74,7 +74,7 @@ jobs:
             ;;
         esac
         
-        UPX_VERSION=${{ UPXVERSION}}
+        UPX_VERSION=${{ env.UPXVERSION }}
         UPX_URL="https://github.com/upx/upx/releases/download/v${UPX_VERSION}/upx-${UPX_VERSION}-linux-${UPX_ARCH}.tar.xz"
         
         curl -L "$UPX_URL" -o upx.tar.xz
