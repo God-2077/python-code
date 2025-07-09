@@ -1,6 +1,6 @@
 - name: 'hello_world'
   version: 'v.25.07.08'
-  python-file: 'package\hello_world.py'
+  python-file: 'package/hello_world.py'
   install-requirements: [
     'psutil'
   ]
@@ -8,7 +8,7 @@
     'upx'
   ]
   # onefile: 2 # 0:文件夹 1:单文件 2:两者
-  icon: package\assets\favicon.ico 
+  icon: package/assets/favicon.ico 
   windows-disable-console: False
   distpath: 'dist'
   timeout: 2700
