@@ -9,41 +9,122 @@ on:
       - 'package/nuitka_config.yml'
 
 jobs:
-  package-and-release:
+  package-and-upload:
     runs-on: windows-latest
+    # runs-on: ${{ matrix.os }}
+    # strategy:
+    #   matrix:
+    #     os: [ubuntu-latest,ubuntu-24.04-arm,windows-latest] # windows-11-arm没有对应的 Python
+    env:
+      PYTHON_VERSION: '3.10'
+      NUITKA_CACHE_DIR: ${{ github.workspace }}/nuitka-cache
+      UPXVERSION: '5.0.1'
     
     # 添加必要的权限
     permissions:
       contents: write  # 允许创建发布和上传资源
     
     steps:
-    - name: Set Timezone to China Standard Time
-      run: tzutil /s "China Standard Time"
-      shell: pwsh
 
     - name: Checkout code
       uses: actions/checkout@v4
           
-    - name: Generate version tag
-      id: version
+    - name: Set Timezone to China Standard Time on Windows
+      if: ${{ runner.os == 'Windows' }}
+      run: tzutil /s "China Standard Time"
+      shell: pwsh
+
+    - name: Set Timezone to China Standard Time on Linux
+      if: ${{ runner.os == 'Linux' }}
+      run: sudo timedatectl set-timezone Asia/Shanghai
+    
+    - name: Generate version tag on Windows
+      if: ${{ runner.os == 'Windows' }}
       run: |
         # 使用 UTC 时间确保一致性
         $date = (Get-Date).ToUniversalTime().ToString("yy.MM.dd")
         $tag = "v$date"
         $release = "Release $date"
-        echo "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-        echo "release_name=$release" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-    
-    
+        echo "VERSION_TAG=$tag" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "RELEASE_NAME=$release" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      shell: pwsh
+
+    - name: Generate version tag on Linux
+      if: ${{ runner.os == 'Linux' }}
+      run: |
+        # 使用 UTC 时间确保一致性
+        DATE=$(date -u +%y.%m.%d)
+        echo "VERSION_TAG=v$DATE" >> $GITHUB_ENV
+        echo "RELEASE_NAME=Release $DATE" >> $GITHUB_ENV
+      shell: bash
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: ${{ env.PYTHON_VERSION }}
 
-    - name: UPX Setup
+    - name: Cache UPX
+      id: cache-upx
+      uses: actions/cache@v4
+      with:
+        path: upx
+        key: ${{ runner.os }}-${{ runner.arch }}-upx-v${{ env.UPXVERSION }}
+        restore-keys: |
+          ${{ runner.os }}-${{ runner.arch }}-upx-
+
+    - name: Create UPX directory
+      if: ${{ steps.cache-upx.outputs.cache-hit != 'true' }}
+      run: mkdir -p ./upx
+
+    - name: Install UPX on Linux
+      if: ${{ runner.os == 'Linux' && steps.cache-upx.outputs.cache-hit != 'true' }}
       run: |
-        mkdir upx
-        curl -o upx/upx.exe https://assets.ksable.top/github/upx/upx/v5.0.1/windows-amd64/upx.exe
+        
+        UPX_URL="https://github.com/upx/upx/releases/download/v${{ env.UPXVERSION }}/upx-${{ env.UPXVERSION }}-${{ runner.arch == 'X64' && 'amd64' || 'arm64'  }}_linux.tar.xz"
+        curl -L "$UPX_URL" -o upx.tar.xz
+        tar -xf upx.tar.xz -C ./upx --strip-components=1
+        chmod +x ./upx/upx
+        
+      shell: bash
+
+    - name: Install UPX on Windows
+      if: ${{  runner.os == 'Windows' && steps.cache-upx.outputs.cache-hit != 'true' }}
+      run: |
+        $arch = if (("${{ runner.arch }}" -eq "amd64") -or ("${{ runner.arch }}" -eq "X64")) { "win64" } else { "win32" }
+        $upxVersion = "${{ env.UPXVERSION }}"
+        $upxUrl = "https://github.com/upx/upx/releases/download/v$upxVersion/upx-$upxVersion-$arch.zip"
+        
+        Invoke-WebRequest -Uri $upxUrl -OutFile upx.zip
+        Expand-Archive -Path upx.zip -DestinationPath ./upx -Force
+        
+        # Windows 版本的 UPX 解压后在子目录中，需要移动到根目录
+        Move-Item -Path "./upx/upx-$upxVersion-$arch/*" -Destination ./upx -Force
+        
+      shell: pwsh
+
+    - name: Verify UPX installation
+      run: |
+        ./upx/upx --version
+      shell: bash  
+      
+    - name: get pip cache dir on Windows
+      if: ${{ runner.os == 'Windows' }}
+      id: pip-cache-dir-window
+      run: echo "pip-cache-dir=$(pip cache dir)" >> $env:GITHUB_OUTPUT
+    
+    - name: get pip cache dir on Linux
+      if: ${{ runner.os == 'Linux' }}
+      id: pip-cache-dir-linux
+      run: echo "pip-cache-dir=$(pip cache dir)" >> $GITHUB_OUTPUT
+    
+    - name: pip cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ runner.os == 'Windows' && steps.pip-cache-dir-window.outputs.pip-cache-dir || steps.pip-cache-dir-linux.outputs.pip-cache-dir }}
+        key: ${{ runner.os }}-${{ runner.arch }}-pip-${{ github.event.inputs.test && hashFiles(github.event.inputs.config_path) || hashFiles('package/nuitka_build.py') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ runner.arch }}-pip-
+    
 
     - name: Install dependencies
       run: |
@@ -64,14 +145,34 @@ jobs:
     #     # 设置控制台编码为UTF-8
     #     chcp.com 65001
 
-    - name: Run packaging script
+    - name: Install ccache on Linux
+      if: ${{ runner.os == 'Linux' }}
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y ccache
+
+    - name: Cache Nuitka cache directory
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.NUITKA_CACHE_DIR }}
+        key: nuitka-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-nuitka-${{ github.event.inputs.test && hashFiles(github.event.inputs.config_path) || hashFiles('package/nuitka_build.py') }}
+        restore-keys: |
+          nuitka-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-
+          nuitka-${{ runner.os }}-${{ runner.arch }}-
+          
+    - name: Run packaging script on Windows
+      if: ${{ runner.os == 'Windows' }}
       run: |
         # 设置Python使用UTF-8编码
         [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
         # 设置控制台编码为UTF-8
         chcp.com 65001
-        cd package
-        python nuitka_build.py nuitka_config.yml
+        python ./package/nuitka_build.py ./package/nuitka_config.yml
+        
+    - name: Run packaging script on Linux
+      if: ${{ runner.os == 'Linux' }}
+      run: |
+        python ./package/nuitka_build.py ./package/nuitka_config.yml
         
     - name: Create Release
       id: create_release
@@ -79,11 +180,11 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.version.outputs.tag }}
-        name: ${{ steps.version.outputs.release_name }}
+        tag_name: ${{ env.VERSION_TAG }}
+        name: ${{ env.RELEASE_NAME }}
         generate_release_notes: true
         draft: false
         prerelease: false
         overwrite_files: true
         files: |
-          dist/*.exe
+          dist/*

@@ -1,6 +1,6 @@
 - name: 'novel_crawler'
   version: 'v.25.07.08'
-  python-file: 'novel_crawler\novel_crawler_v.25.07.08.py'
+  python-file: 'novel_crawler/novel_crawler_v.25.07.08.py'
   install-requirements: [
     'beautifulsoup4',
     'requests',
@@ -8,73 +8,98 @@
     'rich',
     'Pillow'
   ]
-  upx: true
+  enable-plugins: [
+    'upx'
+  ]
   # onefile: 2 # 0:文件夹 1:单文件 2:两者
-  icon: package\assets\favicon.ico 
+  icon: package/assets/favicon.ico 
   windows-disable-console: False
   distpath: 'dist'
   timeout: 2700
   output-name-template: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'
+  custom-command: []
+  only-linux-command: []
+  only-windows-command: []
 
 - name: 'Keyboard_monitoring'
   version: 'v.24.07.16'
-  python-file: '键盘监听\v.24.07.16.py'
+  python-file: '键盘监听/v.24.07.16.py'
   install-requirements: [
     'keyboard',
     'configparser',
     'pywin32',
     'psutil'
   ]
-  upx: true
+  enable-plugins: [
+    'upx'
+  ]
   # onefile: 1
-  icon: package\assets\favicon.ico 
+  icon: package/assets/favicon.ico 
   windows-disable-console: False
   distpath: 'dist'
   timeout: 2700
   output-name-template: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'
+  custom-command: []
+  only-linux-command: []
+  only-windows-command: []
 
 - name: 'NetEase_Cloud_Music_Download'
   version: 'v.25-07-08'
-  python-file: '网易云音乐歌单批量下载歌曲\v.25-07-08.py'
+  python-file: '网易云音乐歌单批量下载歌曲/v.25-07-08.py'
   install-requirements: [
     'quote',
     'requests',
     'tabulate',
     'mutagen'
   ]
-  upx: true
+  enable-plugins: [
+    'upx'
+  ]
   # onefile: 1
-  icon: package\assets\favicon.ico 
+  icon: package/assets/favicon.ico 
   windows-disable-console: False
   distpath: 'dist'
   timeout: 2700
   output-name-template: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'
+  custom-command: []
+  only-linux-command: []
+  only-windows-command: []
 
 - name: 'ftp_server'
   version: 'v.25-05-02'
-  python-file: 'ftp_server\ftp_server_v.25-05-02.py'
+  python-file: 'ftp_server/ftp_server_v.25-05-02.py'
   install-requirements: [
     'pyftpdlib'
   ]
-  upx: true
+  enable-plugins: [
+    'upx'
+  ]
   # onefile: 1
-  icon: package\assets\favicon.ico 
+  icon: package/assets/favicon.ico 
   windows-disable-console: False
   distpath: 'dist'
   timeout: 2700
   output-name-template: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'
+  custom-command: []
+  only-linux-command: []
+  only-windows-command: []
 
 - name: 'sunrise_sunset_info'
   version: 'v.25.05.02'
-  python-file: 'sunrise_sunset_info\sunrise_sunset_info_v.25.05.02.py'
+  python-file: 'sunrise_sunset_info/sunrise_sunset_info_v.25.05.02.py'
   install-requirements: [
     'pyftpdlib',
     'astropy'
   ]
-  upx: true
+  enable-plugins: [
+    'upx'
+  ]
   # onefile: 1 # 0:文件夹 1:单文件 2:两者
-  icon: package\assets\favicon.ico
+  icon: package/assets/favicon.ico
   windows-disable-console: False
   distpath: 'dist'
   timeout: 2700
   output-name-template: '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}'
+  custom-command: []
+  only-linux-command: []
+  only-windows-command: []
