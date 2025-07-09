@@ -56,6 +56,8 @@ def main():
             dist_path = base_dir / task['distpath']
             requirements = task.get('install-requirements', [])
             use_upx = task.get('upx', False)
+            enable_plugins = task.get('enable-plugins', [])
+            
             # onefile = task.get('onefile', 0)
             icon = task.get('icon')
             windows_disable_console = task.get('windows-disable-console', False)
@@ -66,7 +68,7 @@ def main():
             if arrch == "AMD64":
                 arrch = "x64"
             output_name = output_name_template.replace('{{name}}', name).replace('{{version}}', version).replace('{{arch}}', arrch).replace('{{os}}', Machine)
-
+            custom_command = task.get('custom-command')
             # 检查操作系统和架构
             # if Machine not in task.get('os', []):
             #     print(f"警告: 任务 [{i}/{len(config)} {task['name']}] 不支持当前操作系统 {Machine}")
@@ -113,20 +115,42 @@ def main():
                     print(f"警告: 图标文件不存在 {icon_path}")
                     
 
-            if arrch == "ARM64":
-                print("UPX不支持当前架构")
-            else:
-                if use_upx:
+            # if arrch == "ARM64":
+            #     print("UPX不支持当前架构")
+            # else:
+            #     if use_upx:
+            #         if upx_dir.exists():
+            #             cmd.append('--plugin-enable=upx')
+            #             cmd.append(f'--upx-binary={str(upx_dir)}')
+            #             print(f"使用UPX压缩: {upx_dir}")
+            #         else:
+            #             print(f"警告: UPX目录不存在 {upx_dir}")
+            #     else:
+            #         print("不使用UPX压缩")
+            
+            if enable_plugins:
+                plugin_list = ''
+                if len(enable_plugins) == 1:
+                    plugin_list = enable_plugins[0]
+                else:
+                    plugin_list = ','.join(enable_plugins)
+                cmd.append(f'--plugin-enable={plugin_list}')
+                if 'upx' in enable_plugins:
                     if upx_dir.exists():
-                        cmd.append('--plugin-enable=upx')
                         cmd.append(f'--upx-binary={str(upx_dir)}')
                         print(f"使用UPX压缩: {upx_dir}")
                     else:
                         print(f"警告: UPX目录不存在 {upx_dir}")
-                else:
-                    print("不使用UPX压缩")
             
-            # 添加主Python文件
+            if custom_command:
+                # custom_command 为 str
+                if isinstance(custom_command, str):
+                    cmd.extend(custom_command.split())
+                # custom_command 为 list
+                elif isinstance(custom_command, list):
+                    cmd.extend(custom_command)
+
+            # 避免中文等特殊字符导致编译报错
             t_file = str(uuid.uuid4()) + ".py"
             t_file_path = base_dir / t_file
             shutil.copy(str(python_file), t_file_path)
