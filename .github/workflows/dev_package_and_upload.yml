@@ -119,7 +119,7 @@ jobs:
         # 设置控制台编码为UTF-8
         chcp.com 65001
         cd package
-        python nuitka_build.py nuitka_test_config.yml
+        python nuitka_build.py ${{ github.event.inputs.config_path }}
         
     - name: Upload files with wildcards
       uses: actions/upload-artifact@v4
