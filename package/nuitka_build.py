@@ -12,6 +12,36 @@ def normalize_path(path_str):
     """将路径字符串中的反斜杠转换为当前系统的分隔符"""
     return Path(path_str.replace('\\', os.sep))
 
+def delete_folders(directory):
+    """删除指定目录下的所有文件夹，但保留文件"""
+    if os.path.basename(directory) == '' or os.path.basename(directory):
+        dir_name = os.path.basename(os.path.dirname(directory))
+    else:
+        dir_name = os.path.basename(directory)
+    print(f'清理文件夹({dir_name})下的文件夹')
+    try:
+        # 确保目录存在
+        if not os.path.exists(directory):
+            print(f"目录不存在: {directory}")
+            return True
+
+        # 遍历目录中的所有项
+        for item in os.listdir(directory):
+            item_path = os.path.join(directory, item)
+            # 如果是文件夹，则删除
+            if os.path.isdir(item_path):
+                # print(f"删除文件夹: {item_path}")
+                rm_item_dir = ','.join(item_path)
+                shutil.rmtree(item_path)
+            # else:
+            #     print(f"保留文件: {item_path}")
+        print(f'清理文件夹({dir_name})下的文件夹完成: {rm_item_dir}')
+        print("操作完成")
+        return True
+    except Exception as e:
+        print(f"发生错误: {e}")
+        return False
+
 def main():
     print("="*50)
     print("="*50)
@@ -42,7 +72,7 @@ def main():
     # 基础路径设置
     base_dir = Path(__file__).resolve().parent.parent  # 项目根目录
     upx_dir = base_dir / 'upx'  # UPX目录
-
+    dist_path = base_dir / 'dist'
     # 读取配置文件
     config_path = base_dir / args.config
     if not config_path.exists():
@@ -64,7 +94,7 @@ def main():
             
             # 解析任务参数 - 使用路径规范化
             python_file = base_dir / normalize_path(task['python-file'])
-            dist_path = base_dir / normalize_path(task['distpath'])
+            # dist_path = base_dir / normalize_path(task['distpath'])
             requirements = task.get('install-requirements', [])
             enable_plugins = task.get('enable-plugins', [])
             
@@ -220,6 +250,9 @@ def main():
 
         # 输出文件列表
         print(f'Dist: {str(files_list)}')
+        # 清理文件夹
+        if delete_folders(dist_path):
+            print(f"已清理dist目录下文件夹: {dist_path}")
     
     if task_error_list:
         print(f"失败的任务: {', '.join(task_error_list)}")
