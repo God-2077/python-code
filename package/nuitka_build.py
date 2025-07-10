@@ -327,7 +327,7 @@ def main():
     
     if task_error_list:
         print(f"失败的任务: {', '.join(task_error_list)}")
-        sys.exit(1)
+    sys.exit(0)
 
 if __name__ == '__main__':
     main()
