@@ -155,6 +155,10 @@ def main():
             only_windows_command = task.get('only-windows-command')
             clean_cache = task.get('clean-cache')
             
+            if Machine not in task.get('os', ['Windows','Linux']):
+                print(f"警告: 任务 [{i}/{len(config)} {task['name']}] 不支持当前操作系统 {Machine}")
+                continue
+                
             # 检查Python文件是否存在
             if not python_file.exists():
                 print(f"错误: Python文件不存在 {python_file}")
