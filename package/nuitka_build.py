@@ -287,8 +287,12 @@ def main():
                     check=True
                 )
                 
-                print(f"打包成功: {dist_path / output_name}")
+                print(f"打包成功: {name}")
                 success_count += 1
+                output_file_path = dist_path / output_name
+				if output_file_path.exists():
+					print(f'覆盖文件dist/{output_name}')
+				    output_file_path.unlink()
                 # 移动打包结果到dist目录
                 shutil.move(temp_output_path / output_name, dist_path / output_name)
             except subprocess.TimeoutExpired:
