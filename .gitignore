@@ -200,3 +200,6 @@ temp/
 .vscode/
 .idea/
 **/*.bak
+*.build/
+*.dist/
+*.onefile-build/

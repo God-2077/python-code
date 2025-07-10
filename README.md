@@ -1,11 +1,35 @@
-# python-code
+<div align="center">
+  <img src="https://socialify.git.ci/God-2077/python-code/image?font=JetBrains+Mono&language=1&name=1&owner=1&pattern=Circuit+Board&theme=Auto" alt="python-code" width="640" height="320" />
+</div>
+<div align="center">
+  <a href="https://github.com/God-2077/python-code/releases">
+    <img src="https://img.shields.io/github/release/God-2077/python-code.svg?color=0366d6" alt="Latest Release">
+  </a>
+  <a href="https://github.com/God-2077/python-code/releases">
+    <img src="https://img.shields.io/github/release-date/God-2077/python-code.svg?color=28a745" alt="Release Date">
+  </a>
+  <a href="https://github.com/God-2077/python-code/commits/main/">
+    <img src="https://img.shields.io/github/commit-activity/t/God-2077/python-code?color=6f42c1" alt="GitHub commit activity">
+  </a>
+  <a href="https://github.com/God-2077/python-code#GPL-3.0-1-ov-file">
+    <img src="https://img.shields.io/github/license/God-2077/python-code?color=ff5722" alt="GitHub License">
+  </a>
+  <a href="https://github.com/God-2077/python-code/actions">
+    <img src="https://img.shields.io/github/actions/workflow/status/God-2077/python-code/nuitka_package_release.yml?style=flat&color=20c997" alt="GitHub Actions Workflow Status">
+  </a>
+</div>
+<br />
+在我眼里，Python不只是一门编程语言，更像个万能工具🛠️——简单易懂，却能干成不少事。
+ 
+这里分享了一些我写的实用代码，部分已编译成可直接使用的程序，大家可以去 [Releases](https://github.com/God-2077/python-code/releases) 下载。
+ 
+我目前技术还在提升中，对Python开发和git操作不算精通，所以部分代码可能不够规范，git提交记录也有些乱～ 不过更新日志可以直接看README.md哦。
+ 
+如果大家遇到BUG，非常欢迎提交issue，我有空一定会看的～ 另外我即将升入高三，可能回复会慢一些，但一定会留意的。
+ 
+也欢迎大家在这里分享Python代码呀～
 
-我写的python小代码
-
-**禁止任何人将代码用于违法行为**
-
-[![Nuitka Package and Release](https://github.com/God-2077/python-code/actions/workflows/nuitka_package_release.yml/badge.svg)](https://github.com/God-2077/python-code/actions/workflows/nuitka_package_release.yml)
-[![Nuitka Package and Upload(dev)](https://github.com/God-2077/python-code/actions/workflows/dev_package_and_upload.yml/badge.svg)](https://github.com/God-2077/python-code/actions/workflows/dev_package_and_upload.yml)
+另外提醒一句：禁止任何人将这些代码用于违法行为。
 
 ## [网易云音乐歌单批量下载歌曲][1]
 
