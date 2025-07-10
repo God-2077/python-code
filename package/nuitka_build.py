@@ -160,8 +160,6 @@ def main():
                 print(f"错误: Python文件不存在 {python_file}")
                 continue
             
-            # 创建输出目录
-            dist_path.mkdir(parents=True, exist_ok=True)
             
             # 安装依赖
             if requirements:
@@ -171,8 +169,6 @@ def main():
             # 构建Nuitka命令
             cmd = [
                 sys.executable, '-m', 'nuitka',
-                f'--output-filename={output_name}',
-                f'--output-dir={dist_path}',  # 输出目录
                 '--onefile',  # 单文件
                 '--standalone',
                 f'--jobs={os.cpu_count()}',  # 多线程
@@ -257,8 +253,20 @@ def main():
                     cmd.append(f'--clean-cache={clean_cache}')
             
             # 创建临时文件避免中文路径问题
-            temp_file = base_dir / f"{uuid.uuid4().hex}.py"
+            temp_uuid = uuid.uuid4().hex
+            temp_file = base_dir / f"{temp_uuid}.py"
+            temp_output_path = base_dir / temp_uuid
+            
             shutil.copy(python_file, temp_file)
+            # 创建目录
+            dist_path.mkdir(parents=True, exist_ok=True)
+            temp_output_path.mkdir(parents=True, exist_ok=True)
+
+            cmd.append(f'--output-filename={output_name}')
+            # 使用临时目录
+            cmd.append(f'--output-dir={temp_output_path}')
+
+            # 添加py文件
             cmd.append(str(temp_file))
             
             # 打印并执行命令
@@ -274,7 +282,8 @@ def main():
                 
                 print(f"打包成功: {dist_path / output_name}")
                 success_count += 1
-                
+                # 移动打包结果到dist目录
+                shutil.move(temp_output_path / output_name, dist_path / output_name)
             except subprocess.TimeoutExpired:
                 print(f"任务[{i}/{len(config)} {task['name']}] 执行超时 {timeout} 秒")
                 task_error_list.append(task['name'])
@@ -286,6 +295,8 @@ def main():
                 # 确保临时文件被删除
                 if temp_file.exists():
                     temp_file.unlink()
+                if temp_output_path.exists():
+                    shutil.rmtree(temp_output_path)
                     
         except Exception as e:
             print(f"任务[{i}/{len(config)} {task['name']}]失败: {str(e)}")
@@ -301,9 +312,9 @@ def main():
         files_list = []
 
         # 遍历目录下的所有条目
-        for entry in os.listdir(str(base_dir / 'dist')):
+        for entry in os.listdir(str(dist_path)):
             # 拼接完整的文件路径
-            full_path = os.path.join(str(base_dir / 'dist'), entry)
+            full_path = os.path.join(str(dist_path), entry)
             # 检查该路径是否为文件
             if os.path.isfile(full_path):
                 files_list.append(entry)
@@ -311,8 +322,8 @@ def main():
         # 输出文件列表
         print(f'Dist: {str(files_list)}')
         # 清理文件夹
-        if delete_folders(dist_path):
-            print(f"已清理dist目录下文件夹: {dist_path}")
+        # if delete_folders(dist_path):
+        #     print(f"已清理dist目录下文件夹: {dist_path}")
     
     if task_error_list:
         print(f"失败的任务: {', '.join(task_error_list)}")
