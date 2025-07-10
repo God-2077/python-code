@@ -110,7 +110,7 @@ def main():
         task = MyDict(task)
         try:
             print(f"\n{'='*40}")
-            print(f"开始打包任务: [{i}/{len(config)}] {name}")
+            print(f"开始打包任务: [{i}/{len(config)}] {task.get('name')}")
             print(f"{'='*40}")
             
             # 解析任务参数 - 使用路径规范化
@@ -119,10 +119,11 @@ def main():
             requirements = task.get('install-requirements', [])
             enable_plugins = task.get('enable-plugins', [])
             
-            icon = task.get('icon')
+            # icon = task.get('icon')
             name = task.get('name')
             version = task.get('version')
             timeout = task.get('timeout', 60 * 45)
+            os_list = task.get('os-list', ['Linux','Windows'])
 
             # c-compiler
             # c_compiler_clang = task.get('c-compiler', {}).get('clang', False)
@@ -155,8 +156,8 @@ def main():
             only_windows_command = task.get('only-windows-command')
             clean_cache = task.get('clean-cache')
             
-            if Machine not in task.get('os', ['Windows','Linux']):
-                print(f"警告: 任务 [{i}/{len(config)} {name}] 不支持当前操作系统 {Machine}")
+            if system_os not in os_list:
+                print(f"警告: 任务 [{i}/{len(config)}] {name} 不支持当前操作系统 {system_os}")
                 task_error_list.append(name)
                 continue
                 
@@ -305,10 +306,10 @@ def main():
                     shutil.rmtree(temp_output_path)
                     
         except Exception as e:
-            print(f"任务[{i}/{len(config)} {name}]失败: {str(e)}")
+            print(f"任务[{i}/{len(config)} {task.get('name')}]失败: {str(e)}")
             import traceback
             traceback.print_exc()
-            task_error_list.append(name)
+            task_error_list.append(task.get('name'))
     
     # 输出最终结果
     print("\n" + "="*50)
