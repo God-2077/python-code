@@ -157,11 +157,13 @@ def main():
             
             if Machine not in task.get('os', ['Windows','Linux']):
                 print(f"警告: 任务 [{i}/{len(config)} {name}] 不支持当前操作系统 {Machine}")
+                task_error_list.append(name)
                 continue
                 
             # 检查Python文件是否存在
             if not python_file.exists():
                 print(f"错误: Python文件不存在 {python_file}")
+                task_error_list.append(name)
                 continue
             
             
