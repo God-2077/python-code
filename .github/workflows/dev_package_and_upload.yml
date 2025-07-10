@@ -176,7 +176,7 @@ jobs:
         python ./package/nuitka_build.py ./package/nuitka_config.yml
 
     - name: Run Test packaging script on Windows
-      if: ${{ github.event.inputs.run == 'true' && github.event.inputs.test == 'false' && runner.os == 'Windows' }}
+      if: ${{ github.event.inputs.run == 'true' && github.event.inputs.test == 'true' && runner.os == 'Windows' }}
       run: |
         # 设置Python使用UTF-8编码
         [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
@@ -185,7 +185,7 @@ jobs:
         python ./package/nuitka_build.py ${{ github.event.inputs.config_path }}
         
     - name: Run packaging script on Linux
-      if: ${{ github.event.inputs.run == 'true' && github.event.inputs.test == 'true' && runner.os == 'Linux' }}
+      if: ${{ github.event.inputs.run == 'true' && github.event.inputs.test == 'false' && runner.os == 'Linux' }}
       run: |
         python ./package/nuitka_build.py ./package/nuitka_config.yml
 
@@ -222,7 +222,7 @@ jobs:
             }
           }
       env:
-        TAG_NAME: ${{ env.VERSION_TAG }}
+        TAG_NAME: 'v25.07.08'
 
     - name: Use Release ID
       if: ${{ steps.check_release.outputs.exists == 'true' }}
@@ -234,7 +234,7 @@ jobs:
     - name: Upload files with wildcards
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ runner.os }}-${{ runner.arch }}-${{ github.event.inputs.test && 'test-' || '' }}artifact
+        name: ${{ runner.os }}-${{ runner.arch }}-${{ github.event.inputs.test && 'test-' || 'beta-' }}artifact
         path: |
           ./dist/*
         retention-days: 14
