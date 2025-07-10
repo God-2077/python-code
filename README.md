@@ -1,4 +1,4 @@
-![# python-code 我写的python小代码。](https://socialify.git.ci/God-2077/python-code/image?description=1&font=Source+Code+Pro&forks=1&issues=1&language=1&name=1&owner=1&pattern=Circuit+Board&pulls=1&stargazers=1&theme=Auto)
+<img src="https://socialify.git.ci/God-2077/python-code/image?font=JetBrains+Mono&language=1&name=1&owner=1&pattern=Circuit+Board&theme=Auto" alt="python-code" width="640" height="320" />
 
 <div align="center">
   <a href="https://github.com/God-2077/python-code/releases">
