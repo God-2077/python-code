@@ -145,11 +145,14 @@ jobs:
     #     # 设置控制台编码为UTF-8
     #     chcp.com 65001
 
-    - name: Install ccache on Linux
+    - name: Install dependencies on Linux
       if: ${{ runner.os == 'Linux' }}
       run: |
         sudo apt-get update -y
         sudo apt-get install -y ccache
+        echo 'export PATH="/usr/lib/ccache:$PATH"' >> ~/.bashrc
+        source ~/.bashrc
+        sudo apt-get install -y patchelf
 
     - name: Cache Nuitka cache directory
       uses: actions/cache@v4
