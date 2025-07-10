@@ -1,13 +1,22 @@
 ![# python-code 我写的python小代码。](https://socialify.git.ci/God-2077/python-code/image?description=1&font=Source+Code+Pro&forks=1&issues=1&language=1&name=1&owner=1&pattern=Circuit+Board&pulls=1&stargazers=1&theme=Auto)
 
-<!-- 最新 Release 徽章，点击跳转至 Releases 页面 -->
-[![Latest Release](https://img.shields.io/github/release/God-2077/python-code.svg?style=for-the-badge&logo=github&color=blue)](https://github.com/God-2077/python-code/releases)
-
-<!-- 可选：显示最新 Release 发布日期 -->
-[![Release Date](https://img.shields.io/github/release-date/God-2077/python-code.svg?style=for-the-badge&logo=calendar&color=green)](https://github.com/God-2077/python-code/releases)
-
-[![Nuitka Package and Release](https://github.com/God-2077/python-code/actions/workflows/nuitka_package_release.yml/badge.svg)](https://github.com/God-2077/python-code/actions/workflows/nuitka_package_release.yml)
-[![Nuitka Package and Upload(dev)](https://github.com/God-2077/python-code/actions/workflows/dev_package_and_upload.yml/badge.svg)](https://github.com/God-2077/python-code/actions/workflows/dev_package_and_upload.yml)
+<div align="center">
+  <a href="https://github.com/God-2077/python-code/releases">
+    <img src="https://img.shields.io/github/release/God-2077/python-code.svg?color=0366d6" alt="Latest Release">
+  </a>
+  <a href="https://github.com/God-2077/python-code/releases">
+    <img src="https://img.shields.io/github/release-date/God-2077/python-code.svg?color=28a745" alt="Release Date">
+  </a>
+  <a href="https://github.com/God-2077/python-code/commits/main/">
+    <img src="https://img.shields.io/github/commit-activity/t/God-2077/python-code?color=6f42c1" alt="GitHub commit activity">
+  </a>
+  <a href="https://github.com/God-2077/python-code#GPL-3.0-1-ov-file">
+    <img src="https://img.shields.io/github/license/God-2077/python-code?color=ff5722" alt="GitHub License">
+  </a>
+  <a href="https://github.com/God-2077/python-code/actions">
+    <img src="https://img.shields.io/github/actions/workflow/status/God-2077/python-code/nuitka_package_release.yml?style=flat&color=20c997" alt="GitHub Actions Workflow Status">
+  </a>
+</div>
 
 在我眼里，Python不只是一门编程语言，更像个万能工具🛠️——简单易懂，却能干成不少事。
  
