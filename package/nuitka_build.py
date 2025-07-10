@@ -110,7 +110,7 @@ def main():
         task = MyDict(task)
         try:
             print(f"\n{'='*40}")
-            print(f"开始打包任务: [{i}/{len(config)}] {task['name']}")
+            print(f"开始打包任务: [{i}/{len(config)}] {name}")
             print(f"{'='*40}")
             
             # 解析任务参数 - 使用路径规范化
@@ -156,7 +156,7 @@ def main():
             clean_cache = task.get('clean-cache')
             
             if Machine not in task.get('os', ['Windows','Linux']):
-                print(f"警告: 任务 [{i}/{len(config)} {task['name']}] 不支持当前操作系统 {Machine}")
+                print(f"警告: 任务 [{i}/{len(config)} {name}] 不支持当前操作系统 {Machine}")
                 continue
                 
             # 检查Python文件是否存在
@@ -289,12 +289,12 @@ def main():
                 # 移动打包结果到dist目录
                 shutil.move(temp_output_path / output_name, dist_path / output_name)
             except subprocess.TimeoutExpired:
-                print(f"任务[{i}/{len(config)} {task['name']}] 执行超时 {timeout} 秒")
-                task_error_list.append(task['name'])
+                print(f"任务[{i}/{len(config)} {name}] 执行超时 {timeout} 秒")
+                task_error_list.append(name)
             except subprocess.CalledProcessError as e:
                 print(f"打包失败，退出码: {e.returncode}")
                 print(f"错误输出: {e.stderr}")
-                task_error_list.append(task['name'])
+                task_error_list.append(name)
             finally:
                 # 确保临时文件被删除
                 if temp_file.exists():
@@ -303,10 +303,10 @@ def main():
                     shutil.rmtree(temp_output_path)
                     
         except Exception as e:
-            print(f"任务[{i}/{len(config)} {task['name']}]失败: {str(e)}")
+            print(f"任务[{i}/{len(config)} {name}]失败: {str(e)}")
             import traceback
             traceback.print_exc()
-            task_error_list.append(task['name'])
+            task_error_list.append(name)
     
     # 输出最终结果
     print("\n" + "="*50)
