@@ -8,16 +8,30 @@ from pathlib import Path
 import uuid
 import shutil
 
+# 自定义字典类，用于支持默认值为 None 的键
+class MyDict(dict):
+    def get(self, key, default=None):
+        # 如果键存在且值为 None，返回默认值
+        if key in self and self[key] is None:
+            return default
+        # 其他情况调用原生 get 方法
+        return super().get(key, default)
+    
 def normalize_path(path_str):
     """将路径字符串中的反斜杠转换为当前系统的分隔符"""
     return Path(path_str.replace('\\', os.sep))
 
+def get_dir_name(directory):
+    """获取目录名称"""
+    # 处理根目录和路径结尾带分隔符的情况（如 "dist/"）
+    base = os.path.basename(directory)
+    if not base:  # 当路径以分隔符结尾时（如 "dist/"）
+        return os.path.basename(os.path.dirname(directory))
+    return base
+
 def delete_folders(directory):
-    """删除指定目录下的所有文件夹，但保留文件"""
-    if os.path.basename(directory) == '' or os.path.basename(directory):
-        dir_name = os.path.basename(os.path.dirname(directory))
-    else:
-        dir_name = os.path.basename(directory)
+    """directory is str，删除指定目录下的所有文件夹，但保留文件"""
+    dir_name = get_dir_name(directory)
     print(f'清理文件夹({dir_name})下的文件夹')
     try:
         # 确保目录存在
@@ -25,17 +39,21 @@ def delete_folders(directory):
             print(f"目录不存在: {directory}")
             return True
 
+        deleted_dirs = []  # 新增：用于记录删除的目录
         # 遍历目录中的所有项
         for item in os.listdir(directory):
             item_path = os.path.join(directory, item)
             # 如果是文件夹，则删除
             if os.path.isdir(item_path):
-                # print(f"删除文件夹: {item_path}")
-                rm_item_dir = ','.join(item_path)
+                deleted_dirs.append(get_dir_name(item_path))  # 记录被删除的路径
                 shutil.rmtree(item_path)
-            # else:
-            #     print(f"保留文件: {item_path}")
-        print(f'清理文件夹({dir_name})下的文件夹完成: {rm_item_dir}')
+        
+        # 修改打印语句
+        if deleted_dirs:
+            # print(f'清理文件夹({dir_name})下的文件夹完成: {", ".join(deleted_dirs)}')
+            print(f'清理文件夹({dir_name})下的文件夹完成: {deleted_dirs}')
+        else:
+            print(f'未发现需要清理的文件夹({dir_name})')
         print("操作完成")
         return True
     except Exception as e:
@@ -89,6 +107,7 @@ def main():
     
     # 遍历所有打包任务
     for i, task in enumerate(config, start=1):
+        task = MyDict(task)
         try:
             print(f"\n{'='*40}")
             print(f"开始打包任务: [{i}/{len(config)}] {task['name']}")
@@ -101,17 +120,29 @@ def main():
             enable_plugins = task.get('enable-plugins', [])
             
             icon = task.get('icon')
-            windows_disable_console = task.get('windows-disable-console', False)
             name = task.get('name')
             version = task.get('version')
             timeout = task.get('timeout', 60 * 45)
+
+            # c-compiler
+            # c_compiler_clang = task.get('c-compiler', {}).get('clang', False)
+            # c_compiler_mingw64 = task.get('c-compiler', {}).get('mingw64', False)
+            c_compiler = MyDict(task.get('c-compiler', {}))
+            c_compiler_lto = c_compiler.get('lto', 'auto')
+            c_compiler_static_libpython = c_compiler.get('static-libpython', 'auto')
             
+            # windows-specific-controls
+            windows_specific_controls = MyDict(task.get('windows-specific-controls', {}))
+            windows_console_mode = windows_specific_controls.get('console-mode')
+            windows_icon = windows_specific_controls.get('icon')
+            windows_uac_admin = windows_specific_controls.get('uac-admin',False)
+
             # 处理输出文件名模板
             output_name_template = task.get('output-name-template', '{{name}}_{{version}}_nuitka_{{os}}_{{arch}}{{exe_suffix}}')
             
             # 处理架构名称统一
             normalized_arch = "x64" if arch == "AMD64" else arch
-            exe_suffix = '.exe' if system_os == 'Windows' else ''
+            exe_suffix = '.exe' if system_os == 'Windows' else '.bin'
             
             output_name = output_name_template.replace('{{name}}', name) \
                 .replace('{{version}}', version) \
@@ -122,6 +153,7 @@ def main():
             custom_command = task.get('custom-command')
             only_linux_command = task.get('only-linux-command')
             only_windows_command = task.get('only-windows-command')
+            clean_cache = task.get('clean-cache')
             
             # 检查Python文件是否存在
             if not python_file.exists():
@@ -150,15 +182,16 @@ def main():
             # Windows特定参数
             if system_os == 'Windows':
                 cmd.append('--mingw64')
-                if windows_disable_console:
-                    cmd.append('--windows-disable-console')
-                
-                if icon:
-                    icon_path = base_dir / normalize_path(icon)
+                if windows_console_mode in ['force','disable','attach','hide']:
+                    cmd.append(f'--windows-console-mode={windows_console_mode}')
+                if windows_icon:
+                    icon_path = base_dir / normalize_path(windows_icon)
                     if icon_path.exists():
                         cmd.append(f'--windows-icon-from-ico={icon_path}')
                     else:
                         print(f"警告: 图标文件不存在 {icon_path}")
+                if windows_uac_admin:
+                    cmd.append('--windows-uac-admin')
                 if only_windows_command:
                     if isinstance(only_windows_command, str):
                         cmd.extend(only_windows_command.split())
@@ -173,8 +206,26 @@ def main():
                 cmd.append('--clang')
             else:
                 # Linux/macOS 使用 clang
-                cmd.append('--clang')
+                pass
             
+            # c-compiler
+            # if c_compiler_clang and c_compiler_mingw64:
+            #     print('不能同时选择 clang mingw64')
+            # else:
+            #     if c_compiler_clang:
+            #         cmd.append('--clang')
+            #     if c_compiler_mingw64:
+            #         cmd.append('--mingw64')
+            if c_compiler_lto in ['auto','yes','no']:
+                cmd.append(f'--lto={c_compiler_lto}')
+            else:
+                print(f"警告: 无效的lto选项 '{c_compiler_lto}'，将忽略")
+            if c_compiler_static_libpython in ['auto','yes','no']:
+                cmd.append(f'--static-libpython={c_compiler_static_libpython}')
+            else:
+                print(f"警告: 无效的static-libpython选项 '{c_compiler_static_libpython}'，将忽略")
+
+
             # 启用插件
             if enable_plugins:
                 plugin_list = ','.join(enable_plugins)
@@ -197,6 +248,13 @@ def main():
                     cmd.extend(custom_command.split())
                 elif isinstance(custom_command, list):
                     cmd.extend(custom_command)
+            
+            # 禁用缓存
+            if clean_cache:
+                if not clean_cache in ['all','bytecode','ccache','compression','dll-dependencies']:
+                    print(f"警告: 无效的clean-cache选项 '{clean_cache}'，将忽略")
+                else:
+                    cmd.append(f'--clean-cache={clean_cache}')
             
             # 创建临时文件避免中文路径问题
             temp_file = base_dir / f"{uuid.uuid4().hex}.py"
