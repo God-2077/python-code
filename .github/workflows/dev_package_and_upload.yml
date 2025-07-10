@@ -3,11 +3,22 @@ name: Nuitka Package and Upload(dev)
 on:
   workflow_dispatch:
     inputs:
+      run:
+        description: '运行 build.py'
+        required: true
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
       test:
         description: '测试'
         required: true
-        type: boolean
-        default: true
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
       config_path:
         description: '测试模式时用的配置文件路径(非测试时请忽略)'
         required: true
@@ -155,7 +166,8 @@ jobs:
           nuitka-${{ runner.os }}-${{ runner.arch }}-
           
     - name: Run packaging script on Windows
-      if: ${{ !github.event.inputs.test && runner.os == 'Windows' }}
+      if: ${{ github.event.inputs.run == 'true' && github.event.inputs.test == 'false' && runner.os == 'Windows' }}
+
       run: |
         # 设置Python使用UTF-8编码
         [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
@@ -164,7 +176,7 @@ jobs:
         python ./package/nuitka_build.py ./package/nuitka_config.yml
 
     - name: Run Test packaging script on Windows
-      if: ${{ github.event.inputs.test && runner.os == 'Windows' }}
+      if: ${{ github.event.inputs.run == 'true' && github.event.inputs.test == 'false' && runner.os == 'Windows' }}
       run: |
         # 设置Python使用UTF-8编码
         [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
@@ -173,15 +185,52 @@ jobs:
         python ./package/nuitka_build.py ${{ github.event.inputs.config_path }}
         
     - name: Run packaging script on Linux
-      if: ${{ !github.event.inputs.test && runner.os == 'Linux' }}
+      if: ${{ github.event.inputs.run == 'true' && github.event.inputs.test == 'true' && runner.os == 'Linux' }}
       run: |
         python ./package/nuitka_build.py ./package/nuitka_config.yml
 
     - name: Run Test packaging script on Linux
-      if: ${{ github.event.inputs.test && runner.os == 'Linux' }}
+      if: ${{ github.event.inputs.run == 'true' && github.event.inputs.test == 'true' && runner.os == 'Linux' }}
       run: |
         python ./package/nuitka_build.py ${{ github.event.inputs.config_path }}
         
+    # 按理说不用检测 Release 是否已经发布，运行
+    - name: Check if Release exists
+      id: check_release
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const tagName = process.env.TAG_NAME;
+          try {
+            const response = await github.rest.repos.getReleaseByTag({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag: tagName
+            });
+            const releaseId = response.data.id;
+            console.log(`Release '${tagName}' already exists with ID: ${releaseId}`);
+            core.setOutput('exists', 'true');
+            core.setOutput('release_id', releaseId);
+          } catch (error) {
+            if (error.status === 404) {
+              console.log(`Release '${tagName}' does not exist`);
+              core.setOutput('exists', 'false');
+              core.setOutput('release_id', '');
+            } else {
+              core.setFailed(`Failed to check release: ${error.message}`);
+              throw error;
+            }
+          }
+      env:
+        TAG_NAME: ${{ env.VERSION_TAG }}
+
+    - name: Use Release ID
+      if: ${{ steps.check_release.outputs.exists == 'true' }}
+      run: |
+        echo "Existing Release ID: ${{ steps.check_release.outputs.release_id }}"
+        # 这里可以使用 release_id 进行更新操作
+        # 例如：gh release upload ${{ steps.check_release.outputs.release_id }} dist/*
+
     - name: Upload files with wildcards
       uses: actions/upload-artifact@v4
       with:
