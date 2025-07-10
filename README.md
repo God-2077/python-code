@@ -1,5 +1,6 @@
-<img src="https://socialify.git.ci/God-2077/python-code/image?font=JetBrains+Mono&language=1&name=1&owner=1&pattern=Circuit+Board&theme=Auto" alt="python-code" width="640" height="320" />
-
+<div align="center">
+  <img src="https://socialify.git.ci/God-2077/python-code/image?font=JetBrains+Mono&language=1&name=1&owner=1&pattern=Circuit+Board&theme=Auto" alt="python-code" width="640" height="320" />
+</div>
 <div align="center">
   <a href="https://github.com/God-2077/python-code/releases">
     <img src="https://img.shields.io/github/release/God-2077/python-code.svg?color=0366d6" alt="Latest Release">
