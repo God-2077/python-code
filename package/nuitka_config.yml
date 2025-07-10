@@ -51,7 +51,6 @@
   # distpath: 'dist'
   timeout: 2700
   os-list:
-    - 'Linux'
     - 'Windows'
   custom-command: []
   only-linux-command: []
