@@ -14,6 +14,9 @@
   # onefile: 2 # 0:文件夹 1:单文件 2:两者
   # distpath: 'dist'
   timeout: 2700
+  os-list:
+    - 'Linux'
+    - 'Windows'
   custom-command: []
   only-linux-command: []
   only-windows-command: []
@@ -47,6 +50,8 @@
   windows-disable-console: False
   # distpath: 'dist'
   timeout: 2700
+  os-list:
+    - 'Windows'
   custom-command: []
   only-linux-command: []
   only-windows-command: []
@@ -80,6 +85,9 @@
   windows-disable-console: False
   # distpath: 'dist'
   timeout: 2700
+  os-list:
+    - 'Linux'
+    - 'Windows'
   custom-command: []
   only-linux-command: []
   only-windows-command: []
@@ -110,6 +118,9 @@
   windows-disable-console: False
   # distpath: 'dist'
   timeout: 2700
+  os-list:
+    - 'Linux'
+    - 'Windows'
   custom-command: []
   only-linux-command: []
   only-windows-command: []
@@ -141,6 +152,9 @@
   windows-disable-console: False
   # distpath: 'dist'
   timeout: 2700
+  os-list:
+    - 'Linux'
+    - 'Windows'
   custom-command: []
   only-linux-command: []
   only-windows-command: []

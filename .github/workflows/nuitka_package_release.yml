@@ -177,9 +177,48 @@ jobs:
       run: |
         python ./package/nuitka_build.py ./package/nuitka_config.yml
         
+    # 按理说不用检测 Release 是否已经发布，运行
+    - name: Check if Release exists
+      id: check_release
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const tagName = process.env.TAG_NAME;
+          try {
+            const response = await github.rest.repos.getReleaseByTag({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag: tagName
+            });
+            const releaseId = response.data.id;
+            console.log(`Release '${tagName}' already exists with ID: ${releaseId}`);
+            core.setOutput('exists', 'true');
+            core.setOutput('release_id', releaseId);
+          } catch (error) {
+            if (error.status === 404) {
+              console.log(`Release '${tagName}' does not exist`);
+              core.setOutput('exists', 'false');
+              core.setOutput('release_id', '');
+            } else {
+              core.setFailed(`Failed to check release: ${error.message}`);
+              throw error;
+            }
+          }
+      env:
+        TAG_NAME: ${{ env.VERSION_TAG }}
+
+    - name: Use Release ID
+      if: ${{ steps.check_release.outputs.exists == 'true' }}
+      run: |
+        echo "Existing Release ID: ${{ steps.check_release.outputs.release_id }}"
+        # 这里可以使用 release_id 进行更新操作
+        # 例如：gh release upload ${{ steps.check_release.outputs.release_id }} dist/*
+
+    # 仅当Release不存在时执行创建操作
     - name: Create Release
+      if: ${{ steps.check_release.outputs.exists == 'false' }}
       id: create_release
-      uses: softprops/action-gh-release@v1  # 使用更活跃维护的 release 操作
+      uses: softprops/action-gh-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -191,3 +230,14 @@ jobs:
         overwrite_files: true
         files: |
           dist/*
+          
+    - name: Upload Release Assets
+      if: ${{ steps.check_release.outputs.exists == 'true' }}
+      uses: xresloader/upload-to-github-release@main
+      env:
+       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        file: "./dist/*"
+        release_id: ${{ steps.check_release.outputs.release_id }}
+        verbose: false
+        overwrite: true

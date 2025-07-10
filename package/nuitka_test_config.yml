@@ -11,6 +11,9 @@
   # distpath: 'dist'
   timeout: 2700
   custom-command: []
+  os-list:
+    - 'Linux'
+    - 'Windows'
   only-linux-command: []
   only-windows-command: []
   clean-cache: # 禁用选定的缓存，设置"all"则为所有缓存。当前允许的值有："all(全部)","ccache","bytecode(字节码)","compression(压缩)","dll-dependencies(dll依赖项)"。
