@@ -903,37 +903,91 @@ def main():
         
         # 创建CSS样式
         epub_css_content = """
-        body {
-            font-family: "Microsoft YaHei", "STXihei", sans-serif;
-            font-size: 1.0em;
-            line-height: 1.6;
-            margin: 1em auto;
-            max-width: 800px;
-            padding: 0 1em;
-            text-align: justify;
-        }
-        h1 {
-            text-align: center;
-            font-size: 1.8em;
-            margin-top: 2em;
-            margin-bottom: 1.5em;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 0.5em;
-        }
-        h2 {
-            font-size: 1.4em;
-            margin-top: 1.8em;
-        }
-        p {
-            text-indent: 2em;
-            margin: 0.8em 0;
-        }
-        ul {
-            padding-left: 3em;
-        }
-        li {
-            margin: 0.5em 0;
-        }
+            body {
+                font-family: "Microsoft YaHei", "STXihei", sans-serif;
+                font-size: 1.0em;
+                line-height: 1.6;
+                margin: 1em auto;
+                max-width: 800px;
+                padding: 0 1em;
+                text-align: justify;
+            }
+            h1 {
+                font-size: 28px;
+                text-align: center;
+                color: #91531d;
+                font-weight: normal;
+                margin-top: 2.5em;
+                margin-bottom: 2.5em;
+            }
+            h2 {
+                color: #1f4a92;
+                font-size: 22px;
+                font-family: "DK-XIAOBIAOSONG", "方正小标宋简体";
+                font-weight: normal;
+                border-bottom: solid 1px #1f4a92;
+                padding: 0.2em 0em 0.5em 0em;
+                text-indent: 0em;
+            }
+
+            p {
+                font-family: "DK-SONGTI", "方正宋三简体", "方正书宋", "宋体";
+                font-size: 16px;
+                text-indent: 2em;
+            }
+
+            blockquote {
+                font-size: 16px;
+                text-indent: 2em;
+            }
+
+            img {
+                width: 100%;
+                height: auto;
+                /* 居中 */
+                margin: 0 auto;
+            }
+
+            hr {
+                height: 10px;
+                border: none;
+                margin-top: 12px;
+                border-top: 10px groove #87ceeb;
+            }
+
+            hr {
+                color: #3dd9b6;
+                border: double;
+                border-width: 3px 5px;
+                border-color: #3dd9b6 transparent;
+                height: 1px;
+                overflow: visible;
+                margin-left: 20px;
+                margin-right: 20px;
+                position: relative;
+            }
+
+            hr:before,
+            hr:after {
+                content: '';
+                position: absolute;
+                width: 5px;
+                height: 5px;
+                border-width: 0 3px 3px 0;
+                border-style: double;
+                top: -3px;
+                background: radial-gradient(2px at 1px 1px, currentColor 2px, transparent 0) no-repeat;
+            }
+
+            hr:before {
+                transform: rotate(-45deg);
+                left: -20px;
+            }
+
+            hr:after {
+                transform: rotate(135deg);
+                right: -20px;
+            }
         """
 
         # 创建CSS项目
