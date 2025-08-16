@@ -232,6 +232,7 @@ jobs:
         # 例如：gh release upload ${{ steps.check_release.outputs.release_id }} dist/*
 
     - name: Upload files with wildcards
+      if: ${{ github.event.inputs.run == 'true' }}
       uses: actions/upload-artifact@v4
       with:
         name: ${{ runner.os }}-${{ runner.arch }}-${{ github.event.inputs.test && 'test-' || 'beta-' }}artifact
