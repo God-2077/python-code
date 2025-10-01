@@ -15,15 +15,15 @@ pip install -r requirements.txt
 使用方法
 
 ```bash
-python file_type_check.py <file_path>
+python main.py <file_path>
 # 示例
-python file_type_check.py example.txt
+python main.py example.txt
 ```
 
 帮助
 
 ```bash
-python file_type_check.py -h
+python main.py -h
 ```
 
 | 选项 | 描述 |
