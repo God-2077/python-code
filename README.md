@@ -69,6 +69,12 @@
 
 一个简单的文件类型检测工具
 
+## [Wallpaper Engine Workshop 残留文件清理工具][wallpaper_engine_workshop_cleaning]
+
+这是一个用于清理 Wallpaper Engine Workshop 残留文件的工具。
+
+在 Wallpaper 上，将壁纸取消订阅后，可能会因为一些原因而残留一些东西没有删除，如你在本地打开了壁纸目录，然后解压了个压缩文件，当你取消订阅后，Workshop 会删除壁纸原文件，但可能会残留压缩后的新文件。
+
 ## 许可证
 
 本项目采用 GPL-3.0 许可证，详情见 [LICENSE](./LICENSE)
@@ -81,3 +87,4 @@
 [novel_crawler]: ./novel_crawler/
 [sunrise_sunset_info]: ./sunrise_sunset_info/
 [file_type_check]: ./file_type_check/
+[wallpaper_engine_workshop_cleaning]: ./wallpaper_engine_workshop_cleaning/
