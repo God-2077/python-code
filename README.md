@@ -62,7 +62,9 @@
 
 计算日出日落时间、方位角
 
+## [文件类型检测][file_type_check]
 
+一个简单的文件类型检测工具
 
 [1]: https://github.com/God-2077/python-code/tree/main/%E7%BD%91%E6%98%93%E4%BA%91%E9%9F%B3%E4%B9%90%E6%AD%8C%E5%8D%95%E6%89%B9%E9%87%8F%E4%B8%8B%E8%BD%BD%E6%AD%8C%E6%9B%B2
 [2]: https://github.com/God-2077/python-code/blob/main/%E7%BD%91%E6%98%93%E4%BA%91%E9%9F%B3%E4%B9%90%E6%AD%8C%E5%8D%95%E6%89%B9%E9%87%8F%E4%B8%8B%E8%BD%BD%E6%AD%8C%E6%9B%B2/v.24-10-06.py
@@ -72,3 +74,4 @@
 [7]: https://github.com/God-2077/python-code/tree/main/psql_terminal/
 [8]: https://github.com/God-2077/python-code/tree/main/novel_crawler/
 [9]: https://github.com/God-2077/python-code/tree/main/sunrise_sunset_info/
+[file_type_check]: https://github.com/God-2077/python-code/tree/main/file_type_check/

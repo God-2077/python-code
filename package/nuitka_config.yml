@@ -142,6 +142,7 @@
   python-file: 'sunrise_sunset_info/sunrise_sunset_info_v.25.05.02.py'
   install-requirements: [
     'pyftpdlib',
+    'astral',
     'astropy'
   ]
   enable-plugins: [
