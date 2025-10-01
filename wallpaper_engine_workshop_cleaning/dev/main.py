@@ -58,11 +58,14 @@ def find_residual_folders(root_path):
     return residual_folders
 
 def rm_folder(folder):
-    for root, dirs, files in os.walk(folder):
+    # 添加 topdown=False 参数，让遍历从最深层子目录开始
+    for root, dirs, files in os.walk(folder, topdown=False):
         for file in files:
-            os.remove(os.path.join(root, file))
+            file_path = os.path.join(root, file)
+            os.remove(file_path)
         for dir in dirs:
-            os.rmdir(os.path.join(root, dir))
+            dir_path = os.path.join(root, dir)
+            os.rmdir(dir_path)
     os.rmdir(folder)
 
 def main():
@@ -130,10 +133,12 @@ def main():
     confirm = input().strip().lower()
     
     if confirm == 'y' or confirm == '':
-        for folder in residual_folders:
-            folder_path = os.path.join(wallpaper_path, folder['name'])
-            rm_folder(folder_path)
-            console.print(f"[bold green]成功删除:[/bold green] {folder['name']}")
+        with console.status("[bold green]正在删除残留文件夹...[/]", spinner="dots"):
+            for folder in residual_folders:
+                with console.status(f"[bold green]正在删除: {folder['name']}[/]", spinner="dots"):
+                    folder_path = os.path.join(wallpaper_path, folder['name'])
+                    rm_folder(folder_path)
+                console.print(f"[bold green]成功删除:[/bold green] {folder['name']}")
     else:
         console.print("[bold yellow]操作已取消.[/bold yellow]")
 
