@@ -21,7 +21,7 @@ pip install -r requirements.txt
 运行程序
 
 ```bash
-python mian.py
+python main.py
 ```
 
 然后输入 Wallpaper Engine Workshop 目录，按下回车即可。 
