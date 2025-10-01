@@ -5,6 +5,7 @@ from rich.table import Table
 from rich.progress import Progress, BarColumn, TextColumn
 from rich.panel import Panel
 from rich.text import Text
+from rich.progress import track
 
 def get_folder_size(path):
     """计算文件夹大小（字节）"""
@@ -57,16 +58,33 @@ def find_residual_folders(root_path):
     
     return residual_folders
 
+def base_name(folder):
+    if os.path.isdir(folder):
+        if folder.endswith("\\") or folder.endswith("/"):
+            folder = folder[:-1]
+        return os.path.basename(folder)
+
 def rm_folder(folder):
     # 添加 topdown=False 参数，让遍历从最深层子目录开始
-    for root, dirs, files in os.walk(folder, topdown=False):
-        for file in files:
-            file_path = os.path.join(root, file)
-            os.remove(file_path)
-        for dir in dirs:
-            dir_path = os.path.join(root, dir)
-            os.rmdir(dir_path)
-    os.rmdir(folder)
+    folder_name = base_name(folder)
+    is_error = False
+    for root, dirs, files in track(os.walk(folder, topdown=False), description=f"删除文件夹 {folder_name} ..."):
+        try:
+            for file in files:
+                file_path = os.path.join(root, file)
+                os.remove(file_path)
+            for dir in dirs:
+                dir_path = os.path.join(root, dir)
+                os.rmdir(dir_path)
+        except:
+            is_error = True
+            pass
+    try:
+        os.rmdir(folder)
+        return not is_error
+    except:
+        is_error = True
+        pass
 
 def main():
     console = Console()
@@ -133,12 +151,14 @@ def main():
     confirm = input().strip().lower()
     
     if confirm == 'y' or confirm == '':
-        with console.status("[bold green]正在删除残留文件夹...[/]", spinner="dots"):
-            for folder in residual_folders:
-                with console.status(f"[bold green]正在删除: {folder['name']}[/]", spinner="dots"):
+            for i,folder in enumerate(residual_folders):
+                with console.status(f"[bold green]正在删除: {folder['name']} ({i+1}/{len(residual_folders)})[/]", spinner="dots"):
                     folder_path = os.path.join(wallpaper_path, folder['name'])
-                    rm_folder(folder_path)
-                console.print(f"[bold green]成功删除:[/bold green] {folder['name']}")
+                    is_success = rm_folder(folder_path)
+                    if is_success:
+                        console.print(f"[bold green]成功删除:[/bold green] {folder['name']}")
+                    else:
+                        console.print(f"[bold red]删除失败:[/bold red] {folder['name']}")
     else:
         console.print("[bold yellow]操作已取消.[/bold yellow]")
 
