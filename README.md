@@ -75,6 +75,12 @@
 
 在 Wallpaper 上，将壁纸取消订阅后，可能会因为一些原因而残留一些东西没有删除，如你在本地打开了壁纸目录，然后解压了个压缩文件，当你取消订阅后，Workshop 会删除壁纸原文件，但可能会残留压缩后的新文件。
 
+## [终端动画指示器/加载器][animated_spinner]
+
+一个简单的终端动画指示器/加载器，用于在命令行中显示正在进行的操作。
+
+
+
 ## 许可证
 
 本项目采用 GPL-3.0 许可证，详情见 [LICENSE](./LICENSE)
@@ -88,3 +94,4 @@
 [sunrise_sunset_info]: ./sunrise_sunset_info/
 [file_type_check]: ./file_type_check/
 [wallpaper_engine_workshop_cleaning]: ./wallpaper_engine_workshop_cleaning/
+[animated_spinner]: ./animated_spinner/
