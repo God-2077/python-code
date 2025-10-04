@@ -1,0 +1,33 @@
+name: 'systemInfo'
+version: 'dev'
+python-file: 'systemInfo/dev/main.py'
+install-requirements: [
+
+]
+install-requirements-file: 'systemInfo/dev/requirements.txt'
+plugin-list: [
+  'upx'
+]
+include:
+  files: []
+  dirs: []
+# onefile: 2 # 0:文件夹 1:单文件 2:两者
+# distpath: 'dist'
+timeout: 2700
+os-list:
+  - 'Linux'
+  - 'Windows'
+custom-args: []
+only-linux-args: []
+only-windows-args: []
+clean-cache: # 禁用选定的缓存，设置"all"则为所有缓存。当前允许的值有："all(全部)","ccache","bytecode(字节码)","compression(压缩)","dll-dependencies(dll依赖项)"。
+c-compiler:
+  # clang: true # boolean
+  # mingw64: # boolean
+  lto: # auto(默认),yes,no 启用链接时优化（Link Time Optimization, LTO），减少二进制文件大小并提高性能。
+  static-libpython: # auto(默认),yes,no 控制是否静态链接 Python 运行时库。
+windows-specific-controls:
+  console-mode: # force（默认,始终启动控制台）,disable(完全禁用控制台),attach(仅使用现有控制台),hide(创建控制台但立即隐藏（后台运行）)
+  icon: package/assets/favicon.ico
+  uac-admin:  # boolean,管理员权限
+output-name-template: '{name}_{app_ver}_py{py_ver}_nk_{os_short}_{arch}{exe_suffix}'
