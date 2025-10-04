@@ -1,0 +1,44 @@
+name: 'FileTypeChecker'
+version: 'v25.10.01'
+project-base-path: 'file_type_check/{app_ver}'
+init-file: './main.py'
+install-requirements: [
+  'python-magic',
+  'rich'
+]
+install-requirements-file: "requirements.txt"
+enable-plugins: [
+  'tk-inter'
+]
+include:
+  files: []
+  dirs: []
+  modules: []
+  packages: []
+# onefile: 1
+# distpath: 'dist'
+timeout: 1800
+os-list:
+  - 'Linux'
+  - 'Windows'
+build-pwd: script-base-path
+custom-args: []
+only-linux-args: []
+only-windows-args: []
+clean-cache: []
+c-compiler:
+  lto: auto
+  static-libpython: auto
+windows-specific-controls:
+  console-mode: force
+  icon:
+  uac-admin: False
+  uac-uiaccess: False
+output-name-template: 'file_type_checker_{app_ver}_py{py_ver}_nk_{os_short}_{arch}{exe_suffix}'
+check-program:
+  enable: False
+  return-code: 0
+  timeout: 500 # 超时时间，单位秒
+  check-command: [] # 检查命令参数，列表形式，例如: ["--test"]
+  return-output: "success" # 检查程序输出是否包含指定字符串
+  throw-exception: False # 是否抛出异常

@@ -1,3 +1,5 @@
+import codecs
+import encodings
 import platform
 import os
 import sys
