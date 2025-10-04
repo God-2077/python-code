@@ -23,8 +23,10 @@
 在我眼里，Python 不只是一门编程语言，更像个万能工具🛠️——简单易懂，却能干成不少事。
  
 这里分享了一些我写的实用代码，~~部分已编译成可直接使用的程序，大家可以去 [Releases](https://github.com/God-2077/python-code/releases) 下载。~~（太耗资源了，还容易出问题，以后再弄吧）
+
+部分源码在我[博客上(Ksable's 小屋](https://blog.ksable.top/)可能有详细讲解，~~如果找不到那就是没有哦~~
  
-我目前技术还在提升中，对P ython 开发和 git 操作不算精通，所以部分代码可能不够规范，git 提交记录也有些乱～ 不过更新日志可以直接看 README.md 哦。
+我目前技术还在提升中，对 Python 开发和 git 操作不算精通，所以部分代码可能不够规范，git 提交记录也有些乱～ 不过更新日志可以直接看 README.md 哦。
  
 如果大家遇到BUG，非常欢迎提交 [issue](https://github.com/God-2077/python-code/issues) ，我有空一定会看的～
 
@@ -32,9 +34,7 @@
  
 也欢迎大家在这里分享 Python 代码呀～
 
-另外提醒一句：禁止任何人将这些代码用于违法行为。
-
-## [网易云音乐歌单批量下载歌曲][1]
+## [网易云音乐歌单批量下载歌曲][网易云音乐歌单批量下载歌曲]
 
 使用 metting api 批量下载网易云音乐歌曲
 
@@ -80,6 +80,11 @@
 一个简单的终端动画指示器/加载器，用于在命令行中显示正在进行的操作。
 
 
+## **免责声明**
+
+本仓库中的所有脚本仅用于学习和研究目的。您不得将任何相关工具或软件用于非法、不道德的行为，或可能引发刑事、民事责任的活动。严禁将本仓库内任何内容用于非法活动。用户应自行承担使用本仓库内容所产生的全部风险，作者对因不当使用导致的任何后果不承担法律责任。
+
+All scripts in this repository are for learning and research purposes only. You may not use any of the associated tools or software for illegal, unethical purposes, or activities that could give rise to criminal or civil liability. The use of any content herein for illegal activities is strictly prohibited. Users shall bear all risks arising from their use of the repository’s content, and the author assumes no liability for any consequences caused by improper use.
 
 ## 许可证
 
