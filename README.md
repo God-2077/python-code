@@ -81,6 +81,9 @@
 
 一个简单的终端动画指示器/加载器，用于在命令行中显示正在进行的操作。
 
+## [系统信息收集和显示][systemInfo]
+
+系统信息收集和显示，最初用来看看 Github Actions 运行在什么环境上。
 
 ## **免责声明**
 
@@ -102,3 +105,4 @@ All scripts in this repository are for learning and research purposes only. You 
 [file_type_check]: ./file_type_check/
 [wallpaper_engine_workshop_cleaning]: ./wallpaper_engine_workshop_cleaning/
 [animated_spinner]: ./animated_spinner/
+[systemInfo]: ./systemInfo/
