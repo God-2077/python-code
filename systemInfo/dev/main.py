@@ -135,6 +135,14 @@ def is_internet_available():
     if True not in res.values():
         res["status"] = False
     return res
+
+def get_utc_time():
+    """获取当前UTC时间"""
+    # python < 3.11 时，需要使用 datetime.UTC 而不是 datetime.timezone.utc
+    if sys.version_info < (3, 11):
+        return datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+    else:
+        return datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%d %H:%M:%S')
         
 
 def main():
@@ -170,7 +178,7 @@ def main():
     # ======================
     center_title("时间信息")
     print(f"当前时间(本地): {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"当前时间(UTC): {datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"当前时间(UTC): {get_utc_time()}")
     print(f"当前时区: {time.strftime('%Z')} (UTC{time.strftime('%z')})")
 
     # ======================
