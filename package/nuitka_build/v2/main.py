@@ -382,7 +382,7 @@ def main():
         exe_suffix=get_exe_suffix()
     )
     print(f"输出文件名: {output_name}")
-    exit_program()
+    
     # nuitka
     plugin_list = ",".join(config.get('plugin-list', []))
     include_files = config.get('include', {}).get('files', [])
