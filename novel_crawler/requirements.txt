@@ -1,6 +1,6 @@
 beautifulsoup4
 requests
 ebooklib
-yaml
+pyyaml
 rich
 Pillow
