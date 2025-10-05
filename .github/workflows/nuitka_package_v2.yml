@@ -52,6 +52,11 @@ on:
         required: true
         type: number
         default: 90
+      check_environment:
+        description: '检查环境'
+        required: true
+        type: boolean
+        default: false
   # push:
   #   branches:
   #     - dev
@@ -61,7 +66,69 @@ on:
 run-name: ${{ inputs.run_name }}
 
 jobs:
+  # 环境检查
+  check-environment:
+    if: ${{ inputs.check_environment }}
+    runs-on: ${{ inputs.run_on }}
+    env:
+      PYTHON_VERSION: ${{ inputs.python_version }}
+      # UPXVERSION: ${{ inputs.upx_version }}
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+          
+      - name: Set Timezone to China Standard Time on Windows
+        if: ${{ runner.os == 'Windows' }}
+        run: tzutil /s "China Standard Time"
+        shell: pwsh
+
+      - name: Set Timezone to China Standard Time on Linux
+        if: ${{ runner.os == 'Linux' }}
+        run: sudo timedatectl set-timezone Asia/Shanghai
+      
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+       
+      - name: Get pip cache dir
+        id: pip-cache-dir
+        run: echo "pip-cache-dir=$(pip cache dir)" >> $GITHUB_OUTPUT
+        shell: bash
+      
+      - name: pip cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pip-cache-dir.outputs.pip-cache-dir }}
+          key: ${{ runner.os }}-${{ runner.arch }}-pip-${{ hashFiles(inputs.config_path)}}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}-pip-
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r systemInfo/dev/requirements.txt
+      
+      - name: Run systemInfo on Windows
+        if: ${{ runner.os == 'Windows' }}
+        run: |
+          # 设置Python使用UTF-8编码
+          [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
+          # 设置控制台编码为UTF-8
+          chcp.com 65001
+          python systemInfo/dev/main.py
+      
+      - name: Run systemInfo on Linux
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          python systemInfo/dev/main.py
+      
+  
   package-and-upload:
+    if: ${{ !inputs.check_environment }}
     runs-on: ${{ inputs.run_on }}
     env:
       PYTHON_VERSION: ${{ inputs.python_version }}

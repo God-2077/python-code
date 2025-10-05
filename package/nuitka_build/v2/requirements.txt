@@ -3,3 +3,4 @@ pyyaml
 ordered-set==4.1.0
 wheel==0.38.4
 zstandard==0.20.0
+psutil
