@@ -293,7 +293,7 @@ jobs:
       id: get-output-name-windows
       if: ${{ runner.os == 'Windows' }}
       run: |
-        echo "output-name=$(python package/utils/get_dir_detalis.py --dir dist --get-latest-file-name)" >> "$GITHUB_ENV"
+        echo "output-name=$(python package/utils/get_dir_detalis.py --dir dist --get-latest-file-name)" >> $env:GITHUB_ENV
       shell: pwsh
 
     
@@ -301,7 +301,7 @@ jobs:
       id: get-output-name-linux
       if: ${{ runner.os == 'Linux' }}
       run: |
-        echo "output-name=$(python package/utils/get_dir_detalis.py --dir dist --get-latest-file-name)" >> "$GITHUB_ENV"
+        echo "output-name=$(python package/utils/get_dir_detalis.py --dir dist --get-latest-file-name)" >> $GITHUB_ENV
       shell: bash
 
     - name: Upload program artifact

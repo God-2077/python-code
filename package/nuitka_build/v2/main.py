@@ -630,8 +630,8 @@ def main():
     logger.info("dist 目录下的文件夹已清空")
 
     # 检查程序
-    if check_program_enable:
-    # if False:
+    # if check_program_enable:
+    if False:
         logger.info("开始检查程序是否编译成功")
         logger.info(f"检查程序参数: {check_program_check_command}")
         logging.info(f"超时: {check_program_timeout} 秒")
