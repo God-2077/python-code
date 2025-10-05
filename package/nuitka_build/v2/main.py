@@ -623,8 +623,8 @@ def main():
     logger.info("dist 目录下的文件夹已清空")
 
     # 检查程序
-    # if check_program_enable:
-    if False:
+    if check_program_enable:
+    # if False:
         logger.info("开始检查程序是否编译成功")
         logger.info(f"检查程序参数: {check_program_check_command}")
         logging.info(f"超时: {check_program_timeout} 秒")
@@ -657,11 +657,11 @@ def main():
 
         if check_ok and check_result.returncode == check_program_return_code and check_program_return_output in check_result.stdout.strip():
             logging.info(f"检查程序成功: {check_result}")
-            logger.info(f"检查程序输出: \n{"-"*20}\n{check_result.stdout}\n{"-"*20}")
+            logger.info(f"检查程序输出: \n{'-'*20}\n{check_result.stdout}\n{'-'*20}")
         else:
             logging.error(f"检查程序失败: {check_result}")
             logger.error(f"程序返回码: {check_result.returncode}")
-            logger.error(f"程序输出: \n{"-"*20}\n{check_result.stdout}\n{"-"*20}")
+            logger.error(f"程序输出: \n{'-'*20}\n{check_result.stdout}\n{'-'*20}")
             if check_program_throw_exception:
                 raise Exception(f"check program failed")
     else:
