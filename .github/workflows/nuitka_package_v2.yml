@@ -280,13 +280,13 @@ jobs:
         [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
         # 设置控制台编码为UTF-8
         chcp.com 65001
-        python package/nuitka_build/v2/main.py --log-level ${{ inputs.log_level }} --not-exit-code ${{ inputs.not_exit_code }} --config-path ${{ inputs.config_path }}
+        python package/nuitka_build/v2/main.py --log-level ${{ inputs.log_level }} --not-exit-code ${{ inputs.not_exit_code }} ${{ inputs.config_path }}
       shell: pwsh
 
     - name: Run packaging script on Linux
       if: ${{ runner.os == 'Linux' }}
       run: |
-        python package/nuitka_build/v2/main.py --log-level ${{ inputs.log_level }} --not-exit-code ${{ inputs.not_exit_code }} --config-path ${{ inputs.config_path }}
+        python package/nuitka_build/v2/main.py --log-level ${{ inputs.log_level }} --not-exit-code ${{ inputs.not_exit_code }} ${{ inputs.config_path }}
       shell: bash
 
     - name: Get output name on Windows
