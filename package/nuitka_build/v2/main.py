@@ -260,8 +260,10 @@ def main():
     dist_path.mkdir(parents=True, exist_ok=True)  # 创建输出目录
     temp_uuid = uuid.uuid4().hex
     new_project_base_path = base_dir / temp_uuid
-    
 
+    # 替换 \ 为 /
+    if True:
+        config_path= base_dir / args.config.replace('\\','/')
 
     # welcome message
     logging.info("=" * 50)
@@ -282,7 +284,7 @@ def main():
     logging.info(f"进程 PID: {os.getpid()}")
     logging.info(f"进程名称: {psutil.Process(os.getpid()).name()}")
     logging.info(f"是否具有管理员权限: {'True' if is_admin() else 'False'}")
-    logging.info(f"配置文件路径: {args.config}")
+    logging.info(f"配置文件路径: {config_path}")
     logging.info(f"日志输出路径: {log_output_path}")
 
     # python 信息
@@ -311,8 +313,8 @@ def main():
     logging.info(f"输出目录: {dist_path}")
 
     # 检查配置文件是否存在
-    if not os.path.exists(args.config):
-        logging.error(f"配置文件 {args.config} 不存在")
+    if not os.path.exists(config_path):
+        logging.error(f"配置文件 {config_path} 不存在")
         exit_program(1)
     # 检查默认配置文件是否存在
     if not os.path.exists(default_config_path):
@@ -322,7 +324,7 @@ def main():
 
     # 读取配置文件
     try:
-        with open(args.config, "r", encoding="utf-8") as f:
+        with open(config_path, "r", encoding="utf-8") as f:
             config = yaml.safe_load(f)
             config_keys = config.keys()
             logging.info(f"读取配置文件成功")
