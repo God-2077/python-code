@@ -124,7 +124,7 @@ jobs:
       - name: Run systemInfo on Linux
         if: ${{ runner.os == 'Linux' }}
         run: |
-          python systemInfo/dev/main.py
+          sudo python ${{ github.workspace }}/systemInfo/dev/main.py
       
   
   package-and-upload:
