@@ -25,7 +25,7 @@ on:
           - 'ubuntu-latest'
           - 'ubuntu-24.04-arm'
           - 'windows-latest'
-        default: 'ubuntu-latest'
+        default: 'windows-latest'
       config_path:
         description: '配置文件路径，相对项目根目录'
         required: true
