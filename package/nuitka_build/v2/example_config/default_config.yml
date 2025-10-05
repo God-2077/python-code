@@ -28,8 +28,8 @@ clean-cache: # 禁用选定的缓存，设置"all"则为所有缓存。当前允
 c-compiler:
   # clang: true # boolean
   # mingw64: # boolean
-  lto: auto # auto(默认),yes,no 启用链接时优化（Link Time Optimization, LTO），减少二进制文件大小并提高性能。
-  static-libpython: auto # auto(默认),yes,no 控制是否静态链接 Python 运行时库。
+  lto:  # auto(默认),yes,no 启用链接时优化（Link Time Optimization, LTO），减少二进制文件大小并提高性能。
+  static-libpython:  # auto(默认),yes,no 控制是否静态链接 Python 运行时库。
 windows-specific-controls:
   console-mode: force # force（默认,始终启动控制台）,disable(完全禁用控制台),attach(仅使用现有控制台),hide(创建控制台但立即隐藏（后台运行）)
   icon: package/assets/favicon.ico

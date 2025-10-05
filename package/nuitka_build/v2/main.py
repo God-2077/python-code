@@ -263,7 +263,7 @@ def main():
 
     # 替换 \ 为 /
     if True:
-        config_path= base_dir / args.config.replace('\\','/')
+        config_path = base_dir / args.config.replace('\\','/')
 
     # welcome message
     logging.info("=" * 50)
@@ -402,8 +402,8 @@ def main():
     include_modules = config.get('include', {}).get('modules', [])
     include_packages = config.get('include', {}).get('packages', [])
     clean_cache = config.get('clean-cache')
-    c_compiler_lto = config.get('c-compiler', {}).get('lto', 'auto')
-    c_compiler_static_libpython = config.get('c-compiler', {}).get('static-libpython', 'auto')
+    c_compiler_lto = config.get('c-compiler', {}).get('lto')
+    c_compiler_static_libpython = config.get('c-compiler', {}).get('static-libpython')
     windows_specific_controls = config.get('windows-specific-controls', {})
     windows_console_mode = windows_specific_controls.get('console-mode',"force")
     windows_icon = windows_specific_controls.get('icon')
@@ -544,11 +544,11 @@ def main():
             nuitka_cmd.append(f'--clean-cache={clean_cache}')
     
     # c-compiler
-    if c_compiler_lto in ['auto','on','off']:
+    if c_compiler_lto and c_compiler_lto in ['auto','on','off']:
         nuitka_cmd.append(f'--lto={c_compiler_lto}')
     elif c_compiler_lto:
         logging.warning(f"警告: 无效的c-compiler-lto选项 '{c_compiler_lto}'，将忽略")
-    if c_compiler_static_libpython in ['auto','on','off']:
+    if c_compiler_static_libpython and c_compiler_static_libpython in ['auto','on','off']:
         nuitka_cmd.append(f'--static-libpython={c_compiler_static_libpython}')
     elif c_compiler_static_libpython:
         logging.warning(f"警告: 无效的c-compiler-static-libpython选项 '{c_compiler_static_libpython}'，将忽略")
