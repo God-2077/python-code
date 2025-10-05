@@ -442,13 +442,13 @@ def main():
     # 安装依赖
     if requirements:
         logging.info(f"安装依赖: {', '.join(requirements)}")
-        print(f"\n{"-"*20}\n")
+        print(f"\n{'-'*20}\n")
         try:
             subprocess.run([python_executable, '-m', 'pip', 'install'] + requirements, check=True,timeout=1800)
         except subprocess.CalledProcessError as e:
             logging.error(f"安装依赖失败: {e}")
             exit_program(1)
-        print(f"\n{"-"*20}\n")
+        print(f"\n{'-'*20}\n")
         logging.info(f"依赖安装完成")
     if has_requirements_file and requirements_file.exists():
         logging.info(f"安装 requirements 文件 {os.path.abspath(requirements_file)} 中的依赖")
@@ -594,7 +594,7 @@ def main():
     logger.info("开始编译...")
 
     build_start_time = time.time()
-    print(f"\n{"-"*20}\n")
+    print(f"\n{'-'*20}\n")
     try:
         subprocess.run(
             nuitka_cmd,
@@ -609,7 +609,7 @@ def main():
     except subprocess.TimeoutExpired as e:
         logging.error(f"nuitka 编译超时: {e}")
         exit_program(1)
-    print(f"\n{"-"*20}\n")
+    print(f"\n{'-'*20}\n")
     logger.info("编译完成")
     logger.info(f"编译耗时: {format_time(time.time() - build_start_time)}")
     logger.info(f"编译输出: {dist_path / output_name}")
