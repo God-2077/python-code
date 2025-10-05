@@ -176,6 +176,13 @@ def parse_nuitka_version(version_str):
             return f"{version_parts[0]}{version_parts[1]}" # 不要添加小数点
 
     return "unknown"
+def get_utc_time():
+    """获取当前UTC时间"""
+    # python < 3.11 时，需要使用 datetime.UTC 而不是 datetime.timezone.utc
+    if sys.version_info < (3, 11):
+        return datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+    else:
+        return datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%d %H:%M:%S')
 
 def main():
     # utf-8 编码
@@ -267,7 +274,7 @@ def main():
     # 时间
     logging.info(f"{rjust_str('时间信息')}")
     logging.info(f"当前时间(本地): {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    logging.info(f"当前时间(UTC): {datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%d %H:%M:%S')}")
+    logging.info(f"当前时间(UTC): {get_utc_time}")
     logging.info(f"当前时区: {time.strftime('%Z')} (UTC{time.strftime('%z')})")
 
     logging.debug(f"命令行参数: {args}")
