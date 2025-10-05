@@ -149,9 +149,15 @@ def main():
     print(f"操作系统: {platform.system()} {platform.release()}")
     print(f"主机名: {platform.node()}")
     try:
+        # 尝试用 os.getlogin() 获取用户名
         print(f"用户名: {os.getlogin()}")
-    except PermissionError:
-        print(f"用户名: 无权限")
+    except (PermissionError, OSError):
+        # 捕获权限错误和终端环境错误，使用替代方案
+        try:
+            # 备选方案：通过环境变量获取用户名
+            print(f"用户名: {os.environ.get('USER', os.environ.get('USERNAME', '未知'))}")
+        except:
+            print(f"用户名: 无法获取")
     print(f"架构: {platform.machine()}")
     print(f"平台: {platform.platform()}")
     boot_time = get_boot_time()
