@@ -1,24 +1,71 @@
-name: Nuitka Package and Release
+name: Nuitka Package and Upload (v2)
 
 on:
   workflow_dispatch:
+    inputs:
+      run_name:
+        description: '运行名称'
+        required: true
+        type: string
+        default: 'nuitka_package_v2'
+      python_version:
+        description: 'Python 版本'
+        required: true
+        type: string
+        default: '3.10'
+      upx_version:
+        description: 'UPX 版本'
+        required: true
+        type: string
+        default: '5.0.1'
+      run_on:
+        description: '运行环境'
+        required: true
+        type: choice
+        options:
+          - 'ubuntu-latest'
+          - 'ubuntu-24.04-arm'
+          - 'windows-latest'
+        default: 'ubuntu-latest'
+      config_path:
+        description: '配置文件路径，相对项目根目录'
+        required: true
+        type: string
+        # default: 'package/nuitka_test_config.yml'
+      log_level:
+        description: '日志级别'
+        required: true
+        type: choice
+        options:
+          - 'DEBUG'
+          - 'INFO'
+          - 'WARNING'
+          - 'ERROR'
+          - 'CRITICAL'
+        default: 'DEBUG'
+      not_exit_code:
+        description: '禁用错误退出码'
+        required: true
+        type: boolean
+        default: false
+      retention_days:
+        description: 'Artifacts 文件保留天数'
+        required: true
+        type: number
+        default: 90
   # push:
   #   branches:
-  #     - main
+  #     - dev
   #   paths:
   #     - 'package/nuitka_config.yml'
 
 jobs:
   package-and-upload:
-    # runs-on: windows-latest
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest,ubuntu-24.04-arm,windows-latest] # windows-11-arm没有对应的 Python
+    runs-on: ${{ inputs.run_on }}
     env:
-      PYTHON_VERSION: '3.10'
+      PYTHON_VERSION: ${{ inputs.python_version }}
       NUITKA_CACHE_DIR: ${{ github.workspace }}/nuitka-cache
-      UPXVERSION: '5.0.1'
+      UPXVERSION: ${{ inputs.upx_version }}
     
     # 添加必要的权限
     permissions:
@@ -38,26 +85,7 @@ jobs:
       if: ${{ runner.os == 'Linux' }}
       run: sudo timedatectl set-timezone Asia/Shanghai
     
-    - name: Generate version tag on Windows
-      if: ${{ runner.os == 'Windows' }}
-      run: |
-        # 使用 UTC 时间确保一致性
-        $date = (Get-Date).ToUniversalTime().ToString("yy.MM.dd")
-        $tag = "v$date"
-        $release = "Release $date"
-        echo "VERSION_TAG=$tag" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-        echo "RELEASE_NAME=$release" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-      shell: pwsh
-
-    - name: Generate version tag on Linux
-      if: ${{ runner.os == 'Linux' }}
-      run: |
-        # 使用 UTC 时间确保一致性
-        DATE=$(date -u +%y.%m.%d)
-        echo "VERSION_TAG=v$DATE" >> $GITHUB_ENV
-        echo "RELEASE_NAME=Release $DATE" >> $GITHUB_ENV
-      shell: bash
-
+    
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -107,21 +135,26 @@ jobs:
         ./upx/upx --version
       shell: bash  
       
-    - name: get pip cache dir on Windows
-      if: ${{ runner.os == 'Windows' }}
-      id: pip-cache-dir-window
-      run: echo "pip-cache-dir=$(pip cache dir)" >> $env:GITHUB_OUTPUT
+    # - name: get pip cache dir on Windows
+    #   if: ${{ runner.os == 'Windows' }}
+    #   id: pip-cache-dir-window
+    #   run: echo "pip-cache-dir=$(pip cache dir)" >> $env:GITHUB_OUTPUT
     
-    - name: get pip cache dir on Linux
-      if: ${{ runner.os == 'Linux' }}
-      id: pip-cache-dir-linux
+    # - name: get pip cache dir on Linux
+    #   if: ${{ runner.os == 'Linux' }}
+    #   id: pip-cache-dir-linux
+    #   run: echo "pip-cache-dir=$(pip cache dir)" >> $GITHUB_OUTPUT
+
+    - name: Get pip cache dir
+      id: pip-cache-dir
       run: echo "pip-cache-dir=$(pip cache dir)" >> $GITHUB_OUTPUT
+      shell: bash
     
     - name: pip cache
       uses: actions/cache@v4
       with:
-        path: ${{ runner.os == 'Windows' && steps.pip-cache-dir-window.outputs.pip-cache-dir || steps.pip-cache-dir-linux.outputs.pip-cache-dir }}
-        key: ${{ runner.os }}-${{ runner.arch }}-pip-${{ github.event.inputs.test && hashFiles(github.event.inputs.config_path) || hashFiles('package/nuitka_build.py') }}
+        path: ${{ steps.pip-cache-dir.outputs.pip-cache-dir }}
+        key: ${{ runner.os }}-${{ runner.arch }}-pip-${{ hashFiles(inputs.config_path)}}
         restore-keys: |
           ${{ runner.os }}-${{ runner.arch }}-pip-
     
@@ -129,8 +162,15 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install nuitka pyyaml ordered-set==4.1.0 wheel==0.38.4 zstandard==0.20.0
-        
+        pip install -r package/nuitka_build/v2/requirements.txt
+    
+    - name: Get nuitka version
+      id: get-nuitka-version
+      run: |
+        ver=$(python package/utils/get_nuitka_version.py)
+        echo "Nuitka version: ${ver}"
+        echo "nuitka-version=${ver}" >> $GITHUB_OUTPUT
+      shell: bash
     
     # - name: insatll mingw
     #   run: |
@@ -144,7 +184,7 @@ jobs:
     #     [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
     #     # 设置控制台编码为UTF-8
     #     chcp.com 65001
-
+    
     - name: Install dependencies on Linux
       if: ${{ runner.os == 'Linux' }}
       run: |
@@ -158,8 +198,10 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{ env.NUITKA_CACHE_DIR }}
-        key: nuitka-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-nuitka-${{ github.event.inputs.test && hashFiles(github.event.inputs.config_path) || hashFiles('package/nuitka_build.py') }}
+        key: nuitka-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-nuitka-${{ steps.get-nuitka-version.outputs.nuitka-version }}-${{ hashFiles(inputs.config_path) }}
         restore-keys: |
+          nuitka-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-nuitka-${{ steps.get-nuitka-version.outputs.nuitka-version }}-${{ hashFiles(inputs.config_path) }}
+          nuitka-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-nuitka-${{ steps.get-nuitka-version.outputs.nuitka-version }}-
           nuitka-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-
           nuitka-${{ runner.os }}-${{ runner.arch }}-
           
@@ -170,74 +212,44 @@ jobs:
         [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', 'Process')
         # 设置控制台编码为UTF-8
         chcp.com 65001
-        python ./package/nuitka_build.py ./package/nuitka_config.yml
-        
+        python package/nuitka_build/v2/main.py --log-level ${{ inputs.log_level }} --not-exit-code ${{ inputs.not_exit_code }} --config-path ${{ inputs.config_path }}
+      shell: pwsh
+
     - name: Run packaging script on Linux
       if: ${{ runner.os == 'Linux' }}
       run: |
-        python ./package/nuitka_build.py ./package/nuitka_config.yml
-        
-    # 按理说不用检测 Release 是否已经发布，运行
-    - name: Check if Release exists
-      id: check_release
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const tagName = process.env.TAG_NAME;
-          try {
-            const response = await github.rest.repos.getReleaseByTag({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag: tagName
-            });
-            const releaseId = response.data.id;
-            console.log(`Release '${tagName}' already exists with ID: ${releaseId}`);
-            core.setOutput('exists', 'true');
-            core.setOutput('release_id', releaseId);
-          } catch (error) {
-            if (error.status === 404) {
-              console.log(`Release '${tagName}' does not exist`);
-              core.setOutput('exists', 'false');
-              core.setOutput('release_id', '');
-            } else {
-              core.setFailed(`Failed to check release: ${error.message}`);
-              throw error;
-            }
-          }
-      env:
-        TAG_NAME: ${{ env.VERSION_TAG }}
+        python package/nuitka_build/v2/main.py --log-level ${{ inputs.log_level }} --not-exit-code ${{ inputs.not_exit_code }} --config-path ${{ inputs.config_path }}
+      shell: bash
 
-    - name: Use Release ID
-      if: ${{ steps.check_release.outputs.exists == 'true' }}
+    - name: Get output name on Windows
+      id: get-output-name-windows
+      if: ${{ runner.os == 'Windows' }}
       run: |
-        echo "Existing Release ID: ${{ steps.check_release.outputs.release_id }}"
-        # 这里可以使用 release_id 进行更新操作
-        # 例如：gh release upload ${{ steps.check_release.outputs.release_id }} dist/*
+        echo "output-name=$(python package/utils/get_dir_detalis.py --dir dist --get-latest-file-name)" >> "$GITHUB_ENV"
+      shell: pwsh
 
-    # 仅当Release不存在时执行创建操作
-    - name: Create Release
-      if: ${{ steps.check_release.outputs.exists == 'false' }}
-      id: create_release
-      uses: softprops/action-gh-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Get output name on Linux
+      id: get-output-name-linux
+      if: ${{ runner.os == 'Linux' }}
+      run: |
+        echo "output-name=$(python package/utils/get_dir_detalis.py --dir dist --get-latest-file-name)" >> "$GITHUB_ENV"
+      shell: bash
+
+    - name: Upload program artifact
+      uses: actions/upload-artifact@v4
       with:
-        tag_name: ${{ env.VERSION_TAG }}
-        name: ${{ env.RELEASE_NAME }}
-        generate_release_notes: true
-        draft: false
-        prerelease: false
-        overwrite_files: true
-        files: |
-          dist/*
-          
-    - name: Upload Release Assets
-      if: ${{ steps.check_release.outputs.exists == 'true' }}
-      uses: xresloader/upload-to-github-release@main
-      env:
-       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        name: ${{ env.output-name }}
+        path: ./dist/${{ env.output-name }}
+        retention-days: ${{ inputs.retention_days }}
+        if-no-files-found: warn
+        overwrite: true
+    
+    - name: Upload logs artifact
+      uses: actions/upload-artifact@v4
       with:
-        file: "./dist/*"
-        release_id: ${{ steps.check_release.outputs.release_id }}
-        verbose: false
+        name: logs
+        path: ./log/*
+        retention-days: ${{ inputs.retention_days }}
+        if-no-files-found: warn
         overwrite: true

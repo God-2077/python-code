@@ -75,7 +75,7 @@ def exit_program(error_code=0):
     global not_exit_code
     exit_code = error_code if not not_exit_code else 0
     
-    if project_base_path.exists():
+    if project_base_path and os.path.exists(project_base_path):
         shutil.rmtree(project_base_path)
     logging.info(f"退出程序，耗时: {format_time(time.time() - start_time)}")
     logging.info(f"退出程序，退出码: {exit_code}")
@@ -151,6 +151,32 @@ def merge_configs(default_config, custom_config):
 
     return merged
 
+def get_nuitka_version():
+    python_executable = sys.executable
+    try:
+        result = subprocess.run(
+            [python_executable, '-m', 'nuitka', '--version'],
+            check=True,
+            capture_output=True,
+            text=True
+        )
+        return parse_nuitka_version(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print(f"Get Nuitka version failed: {e}")
+        return "unknown"
+
+def parse_nuitka_version(version_str):
+    # 版本号在第一行
+    lines = version_str.splitlines()
+    if lines:
+        first_line =  lines[0].strip()
+        # 提取主版本和子版本号部分
+        version_parts = first_line.split(".")
+        if len(version_parts) >= 2:
+            return f"{version_parts[0]}{version_parts[1]}" # 不要添加小数点
+
+    return "unknown"
+
 def main():
     # utf-8 编码
     sys.stdout.reconfigure(encoding="utf-8")
@@ -163,12 +189,16 @@ def main():
     parser.add_argument("config", type=str, help="Path to the configuration file")
     parser.add_argument("--debug", "-d", action="store_true", help="Enable debug mode")
     parser.add_argument("--log-level", "-l", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], default="DEBUG", help="Set the logging level")
-    parser.add_argument("--log-output", "-o", type=str, default="build_log.log", help="Output directory for the build")
+    parser.add_argument("--log-output", "-o", type=str, default="log/build_log.log", help="Output directory for the build")
     parser.add_argument("--not-exit-code", "-n", action="store_true", help="Do not exit with error code if build fails")
     args = parser.parse_args()
 
+    base_dir = Path(__file__).resolve().parent.parent.parent.parent  # 项目根目录
+    log_output_path = base_dir / args.log_output
+    log_output_path.parent.mkdir(parents=True, exist_ok=True)
+
     # 日志配置 - 同时输出到屏幕和文件
-    log_output_path = Path(args.log_output).resolve()
+    # log_output_path = Path(args.log_output).resolve()
     log_output_path.parent.mkdir(parents=True, exist_ok=True)
     
     # 清除现有的日志处理器
@@ -215,7 +245,6 @@ def main():
 
     # 路径设置
     python_executable = sys.executable
-    base_dir = Path(__file__).resolve().parent.parent.parent.parent  # 项目根目录
     script_file_path = Path(__file__).resolve()  # 当前脚本路径
     script_file_dir = script_file_path.parent  # 当前脚本所在目录
     default_config_path = script_file_dir / 'example_config' / 'default_config.yml'
@@ -224,6 +253,7 @@ def main():
     dist_path.mkdir(parents=True, exist_ok=True)  # 创建输出目录
     temp_uuid = uuid.uuid4().hex
     new_project_base_path = base_dir / temp_uuid
+    
 
 
     # welcome message
@@ -246,7 +276,7 @@ def main():
     logging.info(f"进程名称: {psutil.Process(os.getpid()).name()}")
     logging.info(f"是否具有管理员权限: {'True' if is_admin() else 'False'}")
     logging.info(f"配置文件路径: {args.config}")
-    logging.info(f"日志输出路径: {args.log_output}")
+    logging.info(f"日志输出路径: {log_output_path}")
 
     # python 信息
     logging.info(f"{rjust_str('Python 信息')}")    
@@ -346,11 +376,13 @@ def main():
         name=name,
         app_ver=app_ver,
         py_ver=py_version,
+        nk_ver=get_nuitka_version(),
         os_short=os_short_name(system_os),
         arch=arch,
         exe_suffix=get_exe_suffix()
     )
-
+    print(f"输出文件名: {output_name}")
+    exit_program()
     # nuitka
     plugin_list = ",".join(config.get('plugin-list', []))
     include_files = config.get('include', {}).get('files', [])
@@ -572,6 +604,7 @@ def main():
         )
     except subprocess.CalledProcessError as e:
         logging.error(f"nuitka 编译失败: {e}")
+        logger.error(f"打包失败，退出码: {e.returncode}")
         exit_program(1)
     except subprocess.TimeoutExpired as e:
         logging.error(f"nuitka 编译超时: {e}")

@@ -35,7 +35,7 @@ windows-specific-controls:
   icon: package/assets/favicon.ico
   uac-admin: False # boolean,管理员权限
   uac-uiaccess: False # boolean,请求Windows用户控制（UAC）UI访问权限
-output-name-template: '{name}_{app_ver}_py{py_ver}_nk_{os_short}_{arch}{exe_suffix}'
+output-name-template: '{name}_{app_ver}_py{py_ver}_nk{nk_ver}_{os_short}_{arch}{exe_suffix}'
 
 check-program:
   enable: true
