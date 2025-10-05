@@ -1,5 +1,4 @@
 name: Nuitka Package and Upload (v2)
-
 on:
   workflow_dispatch:
     inputs:
@@ -58,6 +57,8 @@ on:
   #     - dev
   #   paths:
   #     - 'package/nuitka_config.yml'
+
+run-name: ${{ inputs.run_name }}
 
 jobs:
   package-and-upload:
