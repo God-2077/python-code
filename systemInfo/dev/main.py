@@ -297,7 +297,7 @@ def main():
             res_status = False
         print("dns 测试:", res_status)
         for url, status in res.items():
-            print(f"{" "*8}{url}: {status}")
+            print(f"{' '*8}{url}: {status}")
     except PermissionError:
         print("dns 测试: 无权限")
 
@@ -308,7 +308,7 @@ def main():
         print("网络连通性:", res["status"])
         for url, status in res.items():
             if url != "status":
-                print(f"{" "*8}{url}: {status}")
+                print(f"{' '*8}{url}: {status}")
     except PermissionError:
         print("网络连通性: 无权限")
 
