@@ -474,7 +474,6 @@ def main():
         "-m", "nuitka",
         '--standalone', # 独立模式
         '--onefile', # 单文件模式
-        '--follow-imports',
         f'--jobs={cpu_count}',  # 多线程
         '--assume-yes-for-downloads',  # 自动下载外部代码
     ]
@@ -537,11 +536,20 @@ def main():
             logging.warning(f"警告: 无效的 only-windows-args 选项类型 '{type(only_windows_args)}'，将忽略")
     
     #  禁用缓存
-    if clean_cache:
-        if not clean_cache in ['all','bytecode','ccache','compression','dll-dependencies']:
-            logging.warning(f"警告: 无效的clean-cache选项 '{clean_cache}'，将忽略")
-        else:
-            nuitka_cmd.append(f'--clean-cache={clean_cache}')
+    # 获取环境变量
+    disable_cache = os.getenv('DISABLE_CACHE') == '1'
+    if disable_cache:
+        nuitka_cmd.append('--clean-cache=all')
+    elif clean_cache:
+        supported_cache = ['all','bytecode','ccache','compression','dll-dependencies']
+        # 分割","
+        clean_cache_list = clean_cache.split(',')
+        for item in clean_cache_list:
+            if item not in supported_cache:
+                logging.warning(f"警告: 无效的clean-cache选项 '{item}'，将忽略")
+                clean_cache_list.remove(item)
+        clean_cache = ','.join(clean_cache_list)
+        nuitka_cmd.append(f'--clean-cache={clean_cache}')
     
     # c-compiler
     if c_compiler_lto and c_compiler_lto in ['auto','on','off']:
@@ -588,8 +596,11 @@ def main():
     
     # 输出文件名
     nuitka_cmd.append(f'--output-filename={output_name}')
+    # 临时输出目录
+    temp_out_dir = base_dir / uuid.uuid4().hex
     # 输出目录
-    nuitka_cmd.append(f'--output-dir={dist_path}')
+    nuitka_cmd.append(f'--output-dir={temp_out_dir}')
+    logger.info(f"临时输出目录: {temp_out_dir}")
     # 入口文件
     nuitka_cmd.append(str(init_file))
 
@@ -618,18 +629,24 @@ def main():
     except subprocess.TimeoutExpired as e:
         logging.error(f"nuitka 编译超时: {e}")
         exit_program(1)
+    else:
+        logger.info("编译成功")
+        # 移动临时输出目录到 dist 目录
+        if os.path.exists(dist_path / output_name):
+            os.remove(dist_path / output_name)
+        shutil.move(temp_out_dir / output_name, dist_path / output_name)
+        logger.info(f"文件已移动到: {dist_path / output_name}")
     print(f"\n{'-'*20}\n")
-    logger.info("编译完成")
     logger.info(f"编译耗时: {format_time(time.time() - build_start_time)}")
     logger.info(f"编译输出: {dist_path / output_name}")
     # 清空  dist 目录下的文件夹
-    logger.info("清空 dist 目录下的所有文件夹")
-    for item in dist_path.iterdir():
-        if item.is_dir():
-            shutil.rmtree(item)
-        else:
-            pass
-    logger.info("dist 目录下的文件夹已清空")
+    # logger.info("清空 dist 目录下的所有文件夹")
+    # for item in dist_path.iterdir():
+    #     if item.is_dir():
+    #         shutil.rmtree(item)
+    #     else:
+    #         pass
+    # logger.info("dist 目录下的文件夹已清空")
 
     # 检查程序
     # if check_program_enable:

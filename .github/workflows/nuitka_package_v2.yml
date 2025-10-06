@@ -57,6 +57,11 @@ on:
         required: true
         type: boolean
         default: false
+      disable_cache:
+        description: '禁用缓存'
+        required: true
+        type: boolean
+        default: false
   # push:
   #   branches:
   #     - dev
@@ -101,6 +106,7 @@ jobs:
       
       - name: pip cache
         uses: actions/cache@v4
+        if: ${{ !inputs.disable_cache }}
         with:
           path: ${{ steps.pip-cache-dir.outputs.pip-cache-dir }}
           key: ${{ runner.os }}-${{ runner.arch }}-pip-${{ hashFiles(inputs.config_path)}}
@@ -135,6 +141,7 @@ jobs:
       PYTHON_VERSION: ${{ inputs.python_version }}
       NUITKA_CACHE_DIR: ${{ github.workspace }}/nuitka-cache
       UPXVERSION: ${{ inputs.upx_version }}
+      DISABLE_CACHE: ${{ inputs.disable_cache && '1' || '0' }}
     
     # 添加必要的权限
     permissions:
@@ -160,21 +167,21 @@ jobs:
       with:
         python-version: ${{ env.PYTHON_VERSION }}
 
-    - name: Cache UPX
-      id: cache-upx
-      uses: actions/cache@v4
-      with:
-        path: upx
-        key: ${{ runner.os }}-${{ runner.arch }}-upx-v${{ env.UPXVERSION }}
-        restore-keys: |
-          ${{ runner.os }}-${{ runner.arch }}-upx-
+    # - name: Cache UPX
+    #   id: cache-upx
+    #   if: ${{ !inputs.disable_cache }}
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: upx
+    #     key: ${{ runner.os }}-${{ runner.arch }}-upx-v${{ env.UPXVERSION }}
 
     - name: Create UPX directory
-      if: ${{ steps.cache-upx.outputs.cache-hit != 'true' }}
+      # if: ${{ steps.cache-upx.outputs.cache-hit != 'true' }}
       run: mkdir -p ./upx
 
     - name: Install UPX on Linux
-      if: ${{ runner.os == 'Linux' && steps.cache-upx.outputs.cache-hit != 'true' }}
+      # if: ${{ runner.os == 'Linux' && steps.cache-upx.outputs.cache-hit != 'true' }}
+      if: ${{ runner.os == 'Linux' }}
       run: |
         
         UPX_URL="https://github.com/upx/upx/releases/download/v${{ env.UPXVERSION }}/upx-${{ env.UPXVERSION }}-${{ runner.arch == 'X64' && 'amd64' || 'arm64'  }}_linux.tar.xz"
@@ -185,7 +192,8 @@ jobs:
       shell: bash
 
     - name: Install UPX on Windows
-      if: ${{  runner.os == 'Windows' && steps.cache-upx.outputs.cache-hit != 'true' }}
+      # if: ${{  runner.os == 'Windows' && steps.cache-upx.outputs.cache-hit != 'true' }}
+      if: ${{ runner.os == 'Windows' }}
       run: |
         $arch = if (("${{ runner.arch }}" -eq "amd64") -or ("${{ runner.arch }}" -eq "X64")) { "win64" } else { "win32" }
         $upxVersion = "${{ env.UPXVERSION }}"
@@ -221,6 +229,7 @@ jobs:
     
     - name: pip cache
       uses: actions/cache@v4
+      if: ${{ !inputs.disable_cache }}
       with:
         path: ${{ steps.pip-cache-dir.outputs.pip-cache-dir }}
         key: ${{ runner.os }}-${{ runner.arch }}-pip-${{ hashFiles(inputs.config_path)}}
@@ -265,6 +274,7 @@ jobs:
 
     - name: Cache Nuitka cache directory
       uses: actions/cache@v4
+      if: ${{ !inputs.disable_cache }}
       with:
         path: ${{ env.NUITKA_CACHE_DIR }}
         key: nuitka-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-nuitka-${{ steps.get-nuitka-version.outputs.nuitka-version }}-${{ hashFiles(inputs.config_path) }}
@@ -272,7 +282,6 @@ jobs:
           nuitka-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-nuitka-${{ steps.get-nuitka-version.outputs.nuitka-version }}-${{ hashFiles(inputs.config_path) }}
           nuitka-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-nuitka-${{ steps.get-nuitka-version.outputs.nuitka-version }}-
           nuitka-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-
-          nuitka-${{ runner.os }}-${{ runner.arch }}-
           
     - name: Run packaging script on Windows
       if: ${{ runner.os == 'Windows' }}

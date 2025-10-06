@@ -24,7 +24,7 @@ build-pwd: script-base-path # 构建基础路径，可选 root-base-path、scrip
 custom-args: []
 only-linux-args: []
 only-windows-args: []
-clean-cache: # 禁用选定的缓存，设置"all"则为所有缓存。当前允许的值有："all(全部)","ccache","bytecode(字节码)","compression(压缩)","dll-dependencies(dll依赖项)"。
+clean-cache: # 禁用选定的缓存，设置"all"则为所有缓存。当前允许的值有："all(全部)","ccache","bytecode(字节码)","compression(压缩)","dll-dependencies(dll依赖项)"，可使用逗号分隔多个值。
 c-compiler:
   # clang: true # boolean
   # mingw64: # boolean
