@@ -1,4 +1,3 @@
-quote
 requests
 tabulate
 mutagen
