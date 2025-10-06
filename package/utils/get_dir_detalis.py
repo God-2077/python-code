@@ -19,8 +19,8 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     filename=str(log_file),
-    filemode='a',
-    encoding='utf-8'
+    filemode='a'
+    # encoding='utf-8' # 低版本不支持
 )
 
 # 现在再记录开始信息
