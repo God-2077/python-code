@@ -89,6 +89,10 @@
 
 “你好，世界” 像烟花一样在屏幕上绽放
 
+## [HeartBloom][heartbloom]
+
+A heart-shaped blooming animation using Tkinter.
+
 ## **免责声明**
 
 本仓库中的所有脚本仅用于学习和研究目的。您不得将任何相关工具或软件用于非法、不道德的行为，或可能引发刑事、民事责任的活动。严禁将本仓库内任何内容用于非法活动。用户应自行承担使用本仓库内容所产生的全部风险，作者对因不当使用导致的任何后果不承担法律责任。
@@ -111,3 +115,4 @@ All scripts in this repository are for learning and research purposes only. You 
 [animated_spinner]: ./animated_spinner/
 [systemInfo]: ./systemInfo/
 [colorbloom]: ./colorbloom/
+[heartbloom]: ./heartbloom/
