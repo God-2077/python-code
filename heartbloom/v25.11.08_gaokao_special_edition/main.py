@@ -59,6 +59,14 @@ def mainwindow(theme):
     # 窗口置顶
     root.attributes('-topmost', True)
 
+    # 图标
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    icon_path = os.path.join(script_dir, 'favicon.ico')
+    if os.path.exists(icon_path):
+        root.iconbitmap(icon_path)
+    # else:
+    #     print(f"图标文件不存在: {icon_path}")
+
     # 随机选择主题
     theme = random.choice(theme)
     root.configure(bg=theme['bg'])
