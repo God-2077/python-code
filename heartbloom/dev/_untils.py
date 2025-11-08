@@ -6,19 +6,20 @@ import math
 from collections import deque
 import tkinter as tk
 
-def create_window(title='', message='', position={'x':500, 'y':500}, size={'width':208, 'height':62}, background='#CC7B00', foreground='#158A8E', font=('Helvetica', 18), borderless=True):
+def singleMessagePopup(title='', message='', position={'x':500, 'y':500}, size={'width':208, 'height':62}, background='#CC7B00', foreground='#158A8E', font=('Helvetica', 18), borderless=True, topItem=False):
     """
-    创建一个单独的窗口，不阻碍主程序运行
+    创建一个单独的消息弹窗，不阻碍主程序运行
     
     参数:
-        title: 窗口标题
-        message: 窗口显示的消息
-        position: 窗口位置
-        size: 窗口大小
-        background: 窗口背景颜色，默认 #CC7B00
-        foreground: 窗口前景颜色，默认 #158A8E
-        font: 窗口字体，默认 Arial 18
-        borderless: 是否隐藏窗口边框，默认 True
+        title (str): 窗口标题
+        message (str): 窗口显示的消息
+        position (dict): 窗口位置，{'x': 窗口横坐标, 'y': 窗口纵坐标}
+        size (dict): 窗口大小，{'width': 窗口宽度, 'height': 窗口高度}
+        background (str): 窗口背景颜色，默认 #CC7B00
+        foreground (str): 窗口前景颜色，默认 #158A8E
+        font (tuple): 窗口字体，默认 Arial 18
+        borderless (bool): 是否隐藏窗口边框，默认 True
+        topItem (bool): 是否置顶窗口，默认 False
     
     返回:
         无
@@ -39,6 +40,10 @@ def create_window(title='', message='', position={'x':500, 'y':500}, size={'widt
         
         # 设置窗口背景色
         window.configure(bg=background)
+
+        # 设置窗口置顶
+        if topItem:
+            window.wm_attributes("-topmost", True)
         
         # 创建消息标签
         message_label = tk.Label(

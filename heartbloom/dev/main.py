@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import tkinter as tk
 import time
-from until import create_window
-from until import generate_heart_coordinates, y_inverted
+from _untils import generate_heart_coordinates, y_inverted, singleMessagePopup
 import random
 
 def calculate_window_count(screen_width, screen_height):
@@ -84,7 +83,7 @@ if __name__ == '__main__':
         message_index = random.randint(0, len(message) - 1)
         message_text = message[message_index]
         
-        create_window(
+        singleMessagePopup(
             title=f'测试窗口{i+1}',
             message=message_text,
             position={'x': int(x), 'y': int(y)},

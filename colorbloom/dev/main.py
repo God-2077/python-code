@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import random
 import tkinter as tk
-from until import create_window, improved_poisson_disk_sampling
+from _untils import singleMessagePopup, improved_poisson_disk_sampling
 import time
 
 def calculate_window_count(screen_width, screen_height, window_width, window_height, offest=12):
@@ -81,7 +81,7 @@ if __name__ == '__main__':
         message_index = random.randint(0, len(message) - 1)
         message_text = message[message_index]
         
-        create_window(
+        singleMessagePopup(
             title=f'ColorBloom',
             message=message_text,
             position={'x': int(x), 'y': int(y)},
