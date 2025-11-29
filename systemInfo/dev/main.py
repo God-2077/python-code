@@ -9,6 +9,8 @@ import json
 import ctypes
 import time
 import traceback
+import subprocess
+import re
 
 start_time = time.time()
 
@@ -143,7 +145,182 @@ def get_utc_time():
         return datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
     else:
         return datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%d %H:%M:%S')
+
+def get_display_info_windows():
+    """Windows系统获取显示器信息"""
+    try:
+        import ctypes
+        from ctypes import wintypes
         
+        # 定义必要的Windows API结构体和函数
+        class RECT(ctypes.Structure):
+            _fields_ = [("left", ctypes.c_long),
+                       ("top", ctypes.c_long),
+                       ("right", ctypes.c_long),
+                       ("bottom", ctypes.c_long)]
+        
+        class MONITORINFO(ctypes.Structure):
+            _fields_ = [("cbSize", ctypes.c_ulong),
+                       ("rcMonitor", RECT),
+                       ("rcWork", RECT),
+                       ("dwFlags", ctypes.c_ulong)]
+        
+        # 加载user32.dll
+        user32 = ctypes.windll.user32
+        gdi32 = ctypes.windll.gdi32
+        
+        # 获取显示器数量
+        monitor_count = user32.GetSystemMetrics(80)  # SM_CMONITORS
+        
+        displays = []
+        
+        # 枚举显示器回调函数
+        def monitor_enum_proc(hmonitor, hdc_monitor, lprect, lparam):
+            monitor_info = MONITORINFO()
+            monitor_info.cbSize = ctypes.sizeof(MONITORINFO)
+            if user32.GetMonitorInfoW(hmonitor, ctypes.byref(monitor_info)):
+                display_info = {
+                    'width': monitor_info.rcMonitor.right - monitor_info.rcMonitor.left,
+                    'height': monitor_info.rcMonitor.bottom - monitor_info.rcMonitor.top,
+                    'work_width': monitor_info.rcWork.right - monitor_info.rcWork.left,
+                    'work_height': monitor_info.rcWork.bottom - monitor_info.rcWork.top,
+                    'is_primary': bool(monitor_info.dwFlags & 1)  # MONITORINFOF_PRIMARY
+                }
+                displays.append(display_info)
+            return 1
+        
+        # 枚举所有显示器
+        callback = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HMONITOR, wintypes.HDC, 
+                                    ctypes.POINTER(RECT), wintypes.LPARAM)(monitor_enum_proc)
+        user32.EnumDisplayMonitors(None, None, callback, 0)
+        
+        return displays
+        
+    except Exception as e:
+        print(f"获取Windows显示器信息出错: {e}")
+        return []
+
+def get_display_info_linux():
+    """Linux系统获取显示器信息"""
+    try:
+        displays = []
+        
+        # 尝试使用xrandr命令
+        try:
+            result = subprocess.run(['xrandr', '--query'], capture_output=True, text=True, timeout=5)
+            if result.returncode == 0:
+                lines = result.stdout.split('\n')
+                current_display = None
+                
+                for line in lines:
+                    # 查找连接状态的行
+                    if ' connected ' in line:
+                        parts = line.split()
+                        if len(parts) >= 3:
+                            display_name = parts[0]
+                            status = parts[1] if parts[1] in ['connected', 'disconnected'] else 'unknown'
+                            
+                            if status == 'connected':
+                                # 查找分辨率信息
+                                resolution_match = re.search(r'(\d+)x(\d+)', line)
+                                if resolution_match:
+                                    width = int(resolution_match.group(1))
+                                    height = int(resolution_match.group(2))
+                                    
+                                    # 检查是否为主显示器
+                                    is_primary = 'primary' in line
+                                    
+                                    display_info = {
+                                        'name': display_name,
+                                        'width': width,
+                                        'height': height,
+                                        'is_primary': is_primary
+                                    }
+                                    displays.append(display_info)
+        except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError):
+            pass
+        
+        # 如果xrandr不可用，尝试读取系统文件
+        if not displays:
+            try:
+                # 尝试读取虚拟控制台信息
+                with open('/sys/class/graphics/fb0/virtual_size', 'r') as f:
+                    size = f.read().strip().split(',')
+                    if len(size) == 2:
+                        display_info = {
+                            'width': int(size[0]),
+                            'height': int(size[1]),
+                            'is_primary': True
+                        }
+                        displays.append(display_info)
+            except (FileNotFoundError, PermissionError, ValueError):
+                pass
+        
+        return displays
+        
+    except Exception as e:
+        print(f"获取Linux显示器信息出错: {e}")
+        return []
+
+def get_display_info_macos():
+    """macOS系统获取显示器信息"""
+    try:
+        displays = []
+        
+        # 尝试使用system_profiler命令
+        try:
+            result = subprocess.run(['system_profiler', 'SPDisplaysDataType'], 
+                                  capture_output=True, text=True, timeout=10)
+            if result.returncode == 0:
+                lines = result.stdout.split('\n')
+                current_display = {}
+                
+                for line in lines:
+                    line = line.strip()
+                    if 'Resolution:' in line:
+                        # 解析分辨率
+                        resolution_match = re.search(r'Resolution:\s*(\d+)\s*x\s*(\d+)', line)
+                        if resolution_match:
+                            current_display['width'] = int(resolution_match.group(1))
+                            current_display['height'] = int(resolution_match.group(2))
+                    
+                    elif 'Main Display:' in line and 'Yes' in line:
+                        current_display['is_primary'] = True
+                    
+                    elif line.startswith('Displays:'):
+                        if current_display:
+                            displays.append(current_display.copy())
+                            current_display = {}
+                
+                # 添加最后一个显示器
+                if current_display:
+                    displays.append(current_display)
+                    
+        except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError):
+            pass
+        
+        return displays
+        
+    except Exception as e:
+        print(f"获取macOS显示器信息出错: {e}")
+        return []
+
+def get_display_info():
+    """获取显示器信息"""
+    system = platform.system()
+    try:
+        if system == "Windows":
+            return get_display_info_windows()
+        elif system == "Linux":
+            return get_display_info_linux()
+        elif system == "Darwin":  # macOS
+            return get_display_info_macos()
+        else:
+            print(f"不支持的操作系统: {system}")
+            return []
+    except Exception as e:
+        print(f"获取显示器信息出错: {e}")
+        return []
 
 def main():
 
@@ -240,6 +417,26 @@ def main():
                 print("无权限")
     except PermissionError:
         print("无权限")
+
+    # ======================
+    # 显示器信息
+    # ======================
+    center_title("显示器信息")
+    try:
+        displays = get_display_info()
+        if displays:
+            for i, display in enumerate(displays, 1):
+                print(f"\n显示器 {i}:")
+                if 'name' in display:
+                    print(f"  名称: {display['name']}")
+                print(f"  分辨率: {display.get('width', '未知')} x {display.get('height', '未知')}")
+                if 'work_width' in display and 'work_height' in display:
+                    print(f"  工作区域: {display['work_width']} x {display['work_height']}")
+                print(f"  主显示器: {'是' if display.get('is_primary', False) else '否'}")
+        else:
+            print("无法获取显示器信息或未检测到显示器")
+    except Exception as e:
+        print(f"获取显示器信息时出错: {e}")
 
     # ======================
     # 网络信息
