@@ -55,4 +55,4 @@ UpanScan/
 
 - [v25.11.30][v25.11.30]: 初始版本
 
-[v25.11.30]: https://github.com/God-2077/python-code/tree/main/upanscan/v25.11.30
+[v25.11.30]: ./v25.11.30/
