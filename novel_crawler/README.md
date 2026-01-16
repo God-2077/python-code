@@ -128,6 +128,13 @@ python ***.py config.yml
 
 ## 日志
 
+- [dev][10] development
+    - 分卷支持
+        - 配置 rules 部分要添加 `novel_volume_div`、`novel_volume_name`
+
+- [novel_crawler_v.26.01.17][9] beta
+    - EPUB 样式优化
+
 - [novel_crawler_v.25.07.08][8]
     - 日志输出优化
     - 信息显示优化
@@ -176,3 +183,5 @@ python ***.py config.yml
 [6]: novel_crawler_v.25.07.06.py
 [7]: novel_crawler_v.25.07.07.py
 [8]: novel_crawler_v.25.07.08.py
+[9]: novel_crawler_v.26.01.17.py
+[10]: dev.py
