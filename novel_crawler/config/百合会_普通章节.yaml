@@ -4,12 +4,12 @@
 # 基本配置
 basic:
   # 小说详情页面的 URL
-  novel_detail_url: 'https://www.yamibo.com/novel/265975'
+  novel_detail_url: 'https://www.yamibo.com/novel/266804'
   
   # 小说章节列表页面的 URL 列表
   # 如果章节列表在小说详情页面，可以直接使用 novel_detail_url
   novel_chapter_url: 
-    - 'https://www.yamibo.com/novel/265975'
+    - 'https://www.yamibo.com/novel/266804'
   
   # 小说保存路径，默认为当前目录
   download_path: './downloads'
@@ -18,7 +18,7 @@ basic:
   novel_file_encoding: 'utf-8'
   
   # 输出格式 (txt, epub)
-  output_format: 'txt'
+  output_format: 'epub'
   
   # 缩进字符串
   indent_string: '    '
@@ -38,19 +38,19 @@ rules:
   novel_intro: '#w0-collapse1 .panel-body'
   
   # 小说封面图片路径（img 标签，类为 img-responsive）
-  novel_cover_img: 'img.img-responsive'
+  novel_cover_img: 
   
   # 小说章节区域 CSS 选择器（整个目录区域的容器，ID 为 w2）
-  novel_chapter_div: '#w2'
+  novel_chapter_div: 'a[name="catalogue"] + .panel > .panel-body > .row'
   
-  novel_volume_div: '#w2 > div'
+  novel_volume_div: 
   
   # 小说分卷名称 CSS 选择器（新增）
   novel_volume_name: '.panel-title'
   
   
   # 小说单个章节的区域（相对于章节区域，每个章节项包裹在 div.col-md-4 中）
-  novel_chapter_div_only: 'div.col-md-4'
+  novel_chapter_div_only: 'a'
   
   # 小说章节名称（相对于单个章节区域，提取 a 标签的文本）
   novel_chapter_name: 'a'
@@ -97,8 +97,8 @@ network:
   max_retries: 5
 
   # 多线程模式，忽略每分钟请求限制
-  multi_threading: false # 多线程模式
-  thread_count: 32 # 线程数量
+  multi_threading: true # 多线程模式
+  thread_count: 8 # 线程数量
   
   # 每分钟请求量，设为 None 则不限制
   request_interval_time: 1000
