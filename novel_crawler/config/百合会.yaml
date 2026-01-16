@@ -1,0 +1,104 @@
+# 小说爬虫配置（示例）
+# 使用方式: python text.py config.yml
+
+# 基本配置
+basic:
+  # 小说详情页面的 URL
+  novel_detail_url: 'https://www.yamibo.com/novel/265975'
+  
+  # 小说章节列表页面的 URL 列表
+  # 如果章节列表在小说详情页面，可以直接使用 novel_detail_url
+  novel_chapter_url: 
+    - 'https://www.yamibo.com/novel/265975'
+  
+  # 小说保存路径，默认为当前目录
+  download_path: './downloads'
+  
+  # 小说文件的编码(TXT) (utf-8, gbk, gb2312等)
+  novel_file_encoding: 'utf-8'
+  
+  # 输出格式 (txt, epub)
+  output_format: 'txt'
+  
+  # 缩进字符串
+  indent_string: '    '
+  
+  # 是否启用调试模式
+  debug: false
+
+# 选择器规则配置
+rules:
+  # 小说名称 CSS 选择器（基于 h3 元素）
+  novel_name: 'h3'
+  
+  # 小说作者 CSS 选择器（作者名称在 h5 元素中，类为 text-warning）
+  novel_author: 'h5.text-warning'
+  
+  # 小说简介 CSS 选择器（简介文本在 ID 为 w0-collapse1 的折叠面板内）
+  novel_intro: '#w0-collapse1 .panel-body'
+  
+  # 小说封面图片路径（img 标签，类为 img-responsive）
+  novel_cover_img: 'img.img-responsive'
+  
+  # 小说章节区域 CSS 选择器（整个目录区域的容器，ID 为 w2）
+  novel_chapter_div: '#w2'
+  
+  novel_volume_div: '#w2 > div'
+  
+  # 小说分卷名称 CSS 选择器（新增）
+  novel_volume_name: '.panel-title'
+  
+  
+  # 小说单个章节的区域（相对于章节区域，每个章节项包裹在 div.col-md-4 中）
+  novel_chapter_div_only: 'div.col-md-4'
+  
+  # 小说章节名称（相对于单个章节区域，提取 a 标签的文本）
+  novel_chapter_name: 'a'
+  
+  # 小说章节 URL（相对于单个章节区域，提取 a 标签的 href 属性）
+  novel_chapter_url: 'a'
+  
+  # 小说章节内容区域 CSS 选择器（需在章节页面提取，本页面不包含内容，故留空）
+  novel_chapter_content_div: '#w0-collapse1 > div'
+  
+  # 小说单段规则（相对于章节内容区域，示例为 p 标签，但需在章节页面配置）
+  novel_chapter_content_p: 'p'
+  
+  # 小说净化内容配置（基于常见广告模式，可根据实际页面调整）
+  purify:
+    # 需要净化的文本列表
+    text:
+      - '广告内容1'
+      - '广告内容2'
+      - '◆'
+    
+    # 需要净化的正则表达式列表
+    re:
+      - '[\d]{4}-[\d]{2}-[\d]{2}'  # 去除日期格式
+      - '本章节.*更新'             # 去除更新提示
+
+# 网络请求配置
+network:
+  # 请求头设置
+  headers:
+    User-Agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+    Referer: 'https://www.yamibo.com/'
+    Accept-Language: 'zh-CN,zh;q=0.9'
+  
+  # Cookies 设置
+  cookies:
+    session_id: 'abc123'
+    token: 'xyz456'
+  
+  # 请求超时时间(秒)
+  timeout: 5
+  
+  # 失败重试次数
+  max_retries: 5
+
+  # 多线程模式，忽略每分钟请求限制
+  multi_threading: false # 多线程模式
+  thread_count: 32 # 线程数量
+  
+  # 每分钟请求量，设为 None 则不限制
+  request_interval_time: 1000
