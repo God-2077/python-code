@@ -5,6 +5,23 @@ from rich.console import Console
 
 # logger
 class Logger:
+    """
+    日志记录器
+    用于记录日志到控制台和文件。
+    
+    Args:
+        log_file_path (str, optional): 日志文件路径。如果为None，则不记录到文件。默认值为None。
+        encode (str, optional): 日志文件编码。默认值为"utf-8"。
+    
+    Example:
+        ```python
+        logger = Logger("log.txt")
+        logger.info("这是一条INFO日志")
+        logger.debug("这是一条DEBUG日志")
+        logger.warning("这是一条WARN日志")
+        logger.error("这是一条ERROR日志")
+        ```
+    """
     def __init__(self, log_file_path: str =None, encode: str = "utf-8"):
         self.console = Console()
         self.log_file_path = log_file_path
