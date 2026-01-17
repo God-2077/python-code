@@ -58,8 +58,13 @@ rules:
   # 小说章节 URL(相对于小说章节区域)
   novel_chapter_url: 'a'
   
-  # 小说章节内容区域 CSS 选择器
+  # 点击链接打开的包含小说正文页面
+  # 小说内容区域 CSS 选择器
   novel_chapter_content_div: 'div.content'
+  
+  # 小说正文页面章节名称 CSS 选择器（优先级高于章节页面的章节名称）
+  novel_chapter_name_from_content: 'h1.chapter-title'
+
   
   # 小说单段规则(相对于小说章节内容区域)
   novel_chapter_content_p: 'p'  # 可以是 br, p, div, span 等

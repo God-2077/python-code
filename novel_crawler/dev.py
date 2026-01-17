@@ -73,7 +73,7 @@ if len(sys.argv) < 2:
 def load_config():
     """加载配置文件"""
     # 全局变量
-    global novel_detail_url, novel_chapter_url, rule_novel_name, rule_novel_author, rule_novel_intro, rule_novel_chapter_div, rule_novel_chapter_div_only, rule_novel_chapter_name, rule_novel_chapter_url, rule_novel_chapter_content_div, rule_novel_chapter_content_p, rule_novel_chapter_content_purify_text, rule_novel_chapter_content_purify_re, download_path, novel_file_encoding, output_format, indent_string, headers, cookies, timeout, max_retries, request_interval_ms, debug, multi_threading, thread_count, last_request_time, novel_cover_img, rule_novel_volume_div, rule_novel_volume_name
+    global novel_detail_url, novel_chapter_url, rule_novel_name, rule_novel_author, rule_novel_intro, rule_novel_chapter_div, rule_novel_chapter_div_only, rule_novel_chapter_name, rule_novel_chapter_url, rule_novel_chapter_content_div, rule_novel_chapter_content_p, rule_novel_chapter_content_purify_text, rule_novel_chapter_content_purify_re, download_path, novel_file_encoding, output_format, indent_string, headers, cookies, timeout, max_retries, request_interval_ms, debug, multi_threading, thread_count, last_request_time, novel_cover_img, rule_novel_volume_div, rule_novel_volume_name, rule_novel_chapter_name_from_content
     with open(sys.argv[1], 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
 
@@ -91,6 +91,9 @@ def load_config():
     rule_novel_chapter_content_div = config['rules']['novel_chapter_content_div']
     rule_novel_chapter_content_p = config['rules']['novel_chapter_content_p']
     novel_cover_img = config['rules']['novel_cover_img']
+    # 新增：从小说正文页面提取章节名称的规则
+    rule_novel_chapter_name_from_content = config['rules'].get('novel_chapter_name_from_content', '')
+
     
     # 新增分卷配置
     rule_novel_volume_div = config['rules'].get('novel_volume_div', '')
@@ -388,6 +391,17 @@ def download_chapter(chapter_info, progress, task_id, chapter_count):
             return (index, volume_name, chapter_name, "", False, "请求失败")
         
         chapter_soup = parse_html(chapter_response.content)
+        
+        # 新增：从小说正文页面提取章节名称（优先级高于章节页面的章节名称）
+        if rule_novel_chapter_name_from_content:
+            chapter_name_elements = css_select(chapter_soup, rule_novel_chapter_name_from_content)
+            if chapter_name_elements:
+                new_chapter_name = chapter_name_elements[0].text.strip()
+                if new_chapter_name and new_chapter_name != chapter_name:
+                    if debug:
+                        logger.debug(f"章节名称已更新: {chapter_name} -> {new_chapter_name}")
+                    chapter_name = new_chapter_name
+        
         # 获取章节内容区域
         chapter_content_div = css_select(chapter_soup, rule_novel_chapter_content_div)
         if len(chapter_content_div) == 0:
@@ -444,6 +458,7 @@ def download_chapter(chapter_info, progress, task_id, chapter_count):
         if debug:
             logger.debug(f"错误详情:\n{Traceback(show_locals=True)}")
         return (index, volume_name, chapter_name, "", False, error_msg)
+
 
 # 主函数开始
 def main():
@@ -698,8 +713,18 @@ def main():
         if novel_cover_img:
             novel_cover_img_url = css_select(soup,novel_cover_img)
             novel_cover_img_url = novel_cover_img_url[0].get('src')
+            
+            # 添加相对链接转换逻辑（类似于章节链接处理）
+            if novel_cover_img_url.startswith('/'):
+                novel_cover_img_url = get_root_url(novel_detail_url) + novel_cover_img_url
+            elif novel_cover_img_url.startswith("./"):
+                novel_cover_img_url = get_base_url(novel_detail_url) + novel_cover_img_url[2:]
+            elif novel_cover_img_url.startswith("."):
+                novel_cover_img_url = get_base_url(novel_detail_url) + novel_cover_img_url[1:]
+    # 其他情况保持原样
+    
             # 下载封面图片
-            novel_cover_img_url_response = get_url("https://www.yamibo.com/img/book.png")
+            novel_cover_img_url_response = get_url(novel_cover_img_url)
             if novel_cover_img_url_response.status_code == 200:
                 # 保存封面图片到临时文件
                 with open("temp_cover", "wb") as f:

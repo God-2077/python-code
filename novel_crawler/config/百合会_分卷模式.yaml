@@ -4,12 +4,12 @@
 # 基本配置
 basic:
   # 小说详情页面的 URL
-  novel_detail_url: 'https://www.yamibo.com/novel/266765'
+  novel_detail_url: 'https://www.yamibo.com/novel/266564'
   
   # 小说章节列表页面的 URL 列表
   # 如果章节列表在小说详情页面，可以直接使用 novel_detail_url
   novel_chapter_url: 
-    - 'https://www.yamibo.com/novel/266765'
+    - 'https://www.yamibo.com/novel/266564'
   
   # 小说保存路径，默认为当前目录
   download_path: './downloads'
@@ -24,7 +24,7 @@ basic:
   indent_string: '    '
   
   # 是否启用调试模式
-  debug: false
+  debug: true
 
 # 选择器规则配置
 rules:
@@ -38,7 +38,7 @@ rules:
   novel_intro: '#w0-collapse1 .panel-body'
   
   # 小说封面图片路径（img 标签，类为 img-responsive）
-  novel_cover_img: 'img.img-responsive'
+  novel_cover_img: "img.img-responsive"
   
   # 小说章节区域 CSS 选择器（整个目录区域的容器，ID 为 w2）
   novel_chapter_div: '#w2'
@@ -60,6 +60,9 @@ rules:
   
   # 小说章节内容区域 CSS 选择器（需在章节页面提取，本页面不包含内容，故留空）
   novel_chapter_content_div: '#w0-collapse1 > div'
+  
+  # 小说正文页面章节名称 CSS 选择器（优先级高于章节页面的章节名称）
+  novel_chapter_name_from_content: 'title'
   
   # 小说单段规则（相对于章节内容区域，示例为 p 标签，但需在章节页面配置）
   novel_chapter_content_p: 'p'

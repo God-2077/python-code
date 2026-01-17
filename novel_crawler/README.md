@@ -131,6 +131,9 @@ python ***.py config.yml
 - [dev][10] development
     - 分卷支持
         - 配置 rules 部分要添加 `novel_volume_div`、`novel_volume_name`
+    - 添加 小说正文页面章节名称提取（优先级高于章节页面的章节名称）
+        - 配置 rules 部分要添加 `novel_chapter_name_from_content`
+    - 封面图片支持相对链接转换
 
 - [novel_crawler_v.26.01.17][9] beta
     - EPUB 样式优化
