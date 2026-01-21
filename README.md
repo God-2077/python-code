@@ -8,6 +8,7 @@
   <a href="https://github.com/God-2077/python-code/releases">
     <img src="https://img.shields.io/github/release-date/God-2077/python-code.svg?color=28a745" alt="Release Date">
   </a>
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2FGod-2077%2Fpython-code?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2FGod-2077%2Fpython-code.svg?type=shield"/></a>
   <a href="https://github.com/God-2077/python-code/commits/main/">
     <img src="https://img.shields.io/github/commit-activity/t/God-2077/python-code?color=6f42c1" alt="GitHub commit activity">
   </a>
@@ -35,6 +36,9 @@
 也欢迎大家在这里分享 Python 代码呀～
 
 另外提醒一句：禁止任何人将这些代码用于违法行为。
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGod-2077%2Fpython-code.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FGod-2077%2Fpython-code?ref=badge_large)
 
 ## [网易云音乐歌单批量下载歌曲][网易云音乐歌单批量下载歌曲]
 
